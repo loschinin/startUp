@@ -5,7 +5,7 @@ const host = axios.create({
 })
 
 const authHost = axios.create({
-  baseURL: process.env.REACT_APP_API_URI,
+  baseURL: 'http://localhost:5000/',
 })
 
 const authInterceptor = (config: AxiosRequestConfig) => {
