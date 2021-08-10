@@ -1,8 +1,11 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { authRoutes, publicRoutes } from '../routes'
 
-const AppRouter: FC<{ isAuth: boolean }> = ({ isAuth }) => {
+const AppRouter: FC<{
+  isAuth: boolean
+}> = ({ isAuth }) => {
+  console.log('au:', isAuth)
   return (
     <Switch>
       {isAuth &&

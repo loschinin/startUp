@@ -7,7 +7,9 @@ const _Persons: StyledFC = ({ className }) => {
 }
 
 const Persons = styled(_Persons)`
-  background-color: rosybrown;
+  grid-area: content;
+  position: relative;
+  background-color: #895061;
   color: aliceblue;
   padding: 10px;
 `

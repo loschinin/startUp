@@ -5,7 +5,7 @@ const { User } = require("../models/models");
 
 const generateJwt = (id, email, role) => {
   return jwt.sign({ id, email, role }, process.env.SECRET_KEY, {
-    expiresIn: "1h",
+    expiresIn: "1m",
   });
 };
 
@@ -13,12 +13,12 @@ class UserController {
   async registration(req, res, next) {
     const { email, password, role } = req.body;
     if (!email || !password) {
-      return next(ApiError.badRequest("Некорректный email или password"));
+      return next(ApiError.noCredentials("Укажите email и password"));
     }
     const candidate = await User.findOne({ where: { email } });
     if (candidate) {
       return next(
-        ApiError.badRequest("Пользователь с таким email уже существует")
+        ApiError.nonUniqueEmail("Пользователь с таким email уже существует")
       );
     }
     const hashPassword = await bcrypt.hash(password, 5);
@@ -32,11 +32,11 @@ class UserController {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return next(ApiError.internal("Пользователь не найден"));
+      return next(ApiError.incorrectCredentials("Check login or password"));
     }
-    let comparePassword = bcrypt.compareSync(password, user.password);
+    const comparePassword = bcrypt.compareSync(password, user.password);
     if (!comparePassword) {
-      return next(ApiError.internal("Указан неверный пароль"));
+      return next(ApiError.incorrectCredentials("Check login or password"));
     }
     const token = generateJwt(user.id, user.email, user.role);
     return res.json({ token });
