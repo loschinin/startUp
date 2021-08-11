@@ -9,8 +9,14 @@ export const createPerson = async (person: {
   return data
 }
 
-export const fetchPersons = async () => {
-  const { data } = await host.get('api/person')
+export const fetchPersons = async (
+  userId: number,
+  limit: number,
+  page: number
+) => {
+  const { data } = await host.get(
+    `api/person?userId=${userId}&limit=${limit}&page=${page}`
+  )
   return data
 }
 

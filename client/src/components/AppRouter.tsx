@@ -1,17 +1,35 @@
 import React, { FC } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
-import { authRoutes, publicRoutes } from '../routes'
+import { publicRoutes } from '../routes'
+import MyPersons from '../pages/MyPersons'
+import { PersonType } from '../App'
+import Person from '../pages/Person'
 
 const AppRouter: FC<{
   isAuth: boolean
-}> = ({ isAuth }) => {
+  userId: number | null
+  persons: PersonType[]
+}> = ({ isAuth, userId, persons }) => {
   console.log('au:', isAuth)
+
   return (
     <Switch>
-      {isAuth &&
-        authRoutes.map(({ path, Component }) => (
-          <Route key={path} path={path} component={Component} exact />
-        ))}
+      {isAuth && userId && (
+        <Switch>
+          <Route
+            key={'/'}
+            path={'/'}
+            render={() => <MyPersons userId={userId} persons={persons} />}
+            exact
+          />
+          <Route
+            key={'/:id'}
+            path={'/:id'}
+            render={() => <Person userId={userId} />}
+            exact
+          />
+        </Switch>
+      )}
       {publicRoutes.map(({ path, Component }) => (
         <Route key={path} path={path} component={Component} exact />
       ))}

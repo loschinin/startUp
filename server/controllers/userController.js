@@ -5,7 +5,7 @@ const { User } = require("../models/models");
 
 const generateJwt = (id, email, role) => {
   return jwt.sign({ id, email, role }, process.env.SECRET_KEY, {
-    expiresIn: "1m",
+    expiresIn: "1h",
   });
 };
 

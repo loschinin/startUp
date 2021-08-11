@@ -2,6 +2,8 @@ import React, { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { StyledFC } from '../types'
 import { login, registration } from '../http/userAPI'
+import { fetchPersons } from '../http/personAPI'
+import { PersonType } from '../App'
 
 const _Header: StyledFC<{
   isAuth: boolean
@@ -16,7 +18,15 @@ const _Header: StyledFC<{
       email: string | null
     }>
   >
-}> = ({ className, isAuth, setIsAuth, startAuthState, setStartAuthState }) => {
+  setPersons: Dispatch<SetStateAction<PersonType[]>>
+}> = ({
+  className,
+  isAuth,
+  setIsAuth,
+  startAuthState,
+  setStartAuthState,
+  setPersons,
+}) => {
   const [credentials, setCredentials] = useState({ email: '', password: '' })
   const [warnings, setWarnings] = useState('')
   const email = startAuthState.email
@@ -36,10 +46,20 @@ const _Header: StyledFC<{
       }
     }
   }
+  const { userId } = startAuthState
+  console.log({ userId })
+  useMemo(() => {
+    if (isAuth && userId) {
+      fetchPersons(userId, 4, 1).then(({ rows }) => setPersons(rows))
+    }
+  }, [isAuth, userId, setPersons])
   const signIn = async () => {
     try {
-      await login(credentials.email, credentials.password)
+      const { id, email } = await login(credentials.email, credentials.password)
       await setIsAuth(true)
+      await setStartAuthState({ userId: id, email })
+      //await fetchPersons(id, 4, 1)
+      //setPersons(p)
     } catch (e) {
       if (e.message.includes(401)) {
         setWarnings('Email or pwd incorrect')
@@ -52,6 +72,7 @@ const _Header: StyledFC<{
     setStartAuthState({ userId: null, email: null })
     //setCredentials({ email: '', password: '' })
     setWarnings('')
+    setPersons([])
   }
   return isAuth ? (
     <div className={className}>

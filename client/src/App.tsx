@@ -8,6 +8,18 @@ import styled from 'styled-components'
 import Footer from './components/Footer'
 import jwtDecode from 'jwt-decode'
 
+export type PersonType = {
+  id: number
+  name: string
+  description: string
+  image: string
+  momId: number | null
+  dadId: number | null
+  createdAt: Date
+  updatedAt: Date
+  userId: number
+}
+
 const tokenFromLocalStorage = localStorage.getItem('token')
 
 const _App: StyledFC = ({ className }) => {
@@ -16,7 +28,7 @@ const _App: StyledFC = ({ className }) => {
     userId: number | null
     email: string | null
   }>({ userId: null, email: null })
-  /** Checking if is token in localStorage */
+  /** Put into memory isAuth, userId and email from localStorage */
   useMemo(() => {
     if (tokenFromLocalStorage) {
       const decodedToken = jwtDecode<{
@@ -42,30 +54,15 @@ const _App: StyledFC = ({ className }) => {
     }
   }, [])
 
-  /** Checking if token expired */
+  /** Checking token and refresh it after reload page*/
   useEffect(() => {
     if (tokenFromLocalStorage) {
-      check()
+      check().catch((e) => console.log(e.message))
     }
   }, [])
-  /* useEffect(() => {
-    if (tokenFromLocalStorage) {
-      check().then((decodedToken) => {
-        if (decodedToken.exp && Date.now() <= decodedToken.exp * 1000) {
-          setStartAuthState({
-            userId: decodedToken.id,
-            email: decodedToken.email,
-          })
-          setIsAuth(true)
-        } else {
-          setStartAuthState({ userId: null, email: null })
-          setIsAuth(false)
-          localStorage.removeItem('token')
-        }
-      })
-    }
-  }, [])*/
-  //console.log(startAuthState.isAuth)
+
+  const [persons, setPersons] = useState<PersonType[]>([])
+  console.log(persons)
   return (
     <BrowserRouter>
       <div className={className}>
@@ -74,8 +71,13 @@ const _App: StyledFC = ({ className }) => {
           setIsAuth={setIsAuth}
           startAuthState={startAuthState}
           setStartAuthState={setStartAuthState}
+          setPersons={setPersons}
         />
-        <AppRouter isAuth={isAuth} />
+        <AppRouter
+          isAuth={isAuth}
+          userId={startAuthState.userId}
+          persons={persons}
+        />
         <Footer />
       </div>
     </BrowserRouter>
