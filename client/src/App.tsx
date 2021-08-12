@@ -7,6 +7,7 @@ import { StyledFC } from './types'
 import styled from 'styled-components'
 import Footer from './components/Footer'
 import jwtDecode from 'jwt-decode'
+import { LIMIT } from './constants'
 
 export type PersonType = {
   id: number
@@ -18,6 +19,12 @@ export type PersonType = {
   createdAt: Date
   updatedAt: Date
   userId: number
+}
+export type DecodedToken = {
+  id: number
+  email: string
+  iat?: string
+  exp?: number
 }
 
 const tokenFromLocalStorage = localStorage.getItem('token')
@@ -31,12 +38,8 @@ const _App: StyledFC = ({ className }) => {
   /** Put into memory isAuth, userId and email from localStorage */
   useMemo(() => {
     if (tokenFromLocalStorage) {
-      const decodedToken = jwtDecode<{
-        id: number
-        email: string
-        exp: number
-      }>(tokenFromLocalStorage)
-      console.log(decodedToken)
+      const decodedToken = jwtDecode<DecodedToken>(tokenFromLocalStorage)
+      //console.log(decodedToken)
       if (decodedToken.exp && Date.now() <= decodedToken.exp * 1000) {
         setStartAuthState({
           userId: decodedToken.id,
@@ -60,9 +63,16 @@ const _App: StyledFC = ({ className }) => {
       check().catch((e) => console.log(e.message))
     }
   }, [])
-
-  const [persons, setPersons] = useState<PersonType[]>([])
-  console.log(persons)
+  /** Init persons state */
+  const [persons, setPersons] = useState<{ count: number; rows: PersonType[] }>(
+    { count: 0, rows: [] }
+  )
+  const [nextPage, setNextPage] = useState(2)
+  //const isMorePages = persons.count % LIMIT >= nextPage - 1
+  const isMorePages =
+    persons.count > persons.rows.length &&
+    Math.ceil(persons.count / LIMIT) >= nextPage - 1
+  //console.log(persons)
   return (
     <BrowserRouter>
       <div className={className}>
@@ -72,11 +82,16 @@ const _App: StyledFC = ({ className }) => {
           startAuthState={startAuthState}
           setStartAuthState={setStartAuthState}
           setPersons={setPersons}
+          setNextPage={setNextPage}
         />
         <AppRouter
           isAuth={isAuth}
           userId={startAuthState.userId}
           persons={persons}
+          setPersons={setPersons}
+          nextPage={nextPage}
+          setNextPage={setNextPage}
+          isMorePages={isMorePages}
         />
         <Footer />
       </div>

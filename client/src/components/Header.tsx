@@ -4,6 +4,8 @@ import { StyledFC } from '../types'
 import { login, registration } from '../http/userAPI'
 import { fetchPersons } from '../http/personAPI'
 import { PersonType } from '../App'
+import { LIMIT } from '../constants'
+import Button from './Button'
 
 const _Header: StyledFC<{
   isAuth: boolean
@@ -18,7 +20,8 @@ const _Header: StyledFC<{
       email: string | null
     }>
   >
-  setPersons: Dispatch<SetStateAction<PersonType[]>>
+  setPersons: Dispatch<SetStateAction<{ count: number; rows: PersonType[] }>>
+  setNextPage: Dispatch<SetStateAction<number>>
 }> = ({
   className,
   isAuth,
@@ -26,6 +29,7 @@ const _Header: StyledFC<{
   startAuthState,
   setStartAuthState,
   setPersons,
+  setNextPage,
 }) => {
   const [credentials, setCredentials] = useState({ email: '', password: '' })
   const [warnings, setWarnings] = useState('')
@@ -47,10 +51,10 @@ const _Header: StyledFC<{
     }
   }
   const { userId } = startAuthState
-  console.log({ userId })
+
   useMemo(() => {
     if (isAuth && userId) {
-      fetchPersons(userId, 4, 1).then(({ rows }) => setPersons(rows))
+      fetchPersons(userId, LIMIT, 1).then((res) => setPersons(res))
     }
   }, [isAuth, userId, setPersons])
   const signIn = async () => {
@@ -72,7 +76,12 @@ const _Header: StyledFC<{
     setStartAuthState({ userId: null, email: null })
     //setCredentials({ email: '', password: '' })
     setWarnings('')
-    setPersons([])
+    setPersons({ count: 0, rows: [] })
+    setNextPage(2)
+  }
+  const signBtns: { [k: string]: () => Promise<void> } = {
+    'sign in': () => signIn(),
+    'reg me': () => regMe(),
   }
   return isAuth ? (
     <div className={className}>
@@ -104,18 +113,15 @@ const _Header: StyledFC<{
       />
 
       <div>
-        <Button
-          onClick={() => signIn()}
-          disabled={!(credentials.email && credentials.password)}
-        >
-          {'sign in'}
-        </Button>
-        <Button
-          onClick={() => regMe()}
-          disabled={!(credentials.email && credentials.password)}
-        >
-          {'reg me'}
-        </Button>
+        {Object.keys(signBtns).map((s) => (
+          <Button
+            key={s}
+            onClick={signBtns[s]}
+            disabled={!(credentials.email && credentials.password)}
+          >
+            {s}
+          </Button>
+        ))}
         <div style={{ color: 'pink', textAlign: 'center' }}>{warnings}</div>
       </div>
     </div>
@@ -149,25 +155,6 @@ const Input = styled.input`
   @media (min-width: 415px) {
     font-size: 15px;
     padding: 4px 0;
-  }
-`
-
-const Button = styled.button`
-  width: 50%;
-  //max-width: 180px;
-  background: #0677a1;
-  border: 2px solid #2d4159;
-  color: #fff;
-  padding: 8px;
-  cursor: pointer;
-  font-size: 25px;
-  :disabled {
-    background-color: #2d4159;
-    color: #0677a1;
-  }
-  @media (min-width: 415px) {
-    font-size: 17px;
-    padding: 4px;
   }
 `
 

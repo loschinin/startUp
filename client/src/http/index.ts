@@ -1,11 +1,12 @@
 import axios, { AxiosRequestConfig } from 'axios'
+import { BASE_URL } from '../constants'
 
 const host = axios.create({
-  baseURL: 'http://localhost:5000/',
+  baseURL: BASE_URL,
 })
 
 const authHost = axios.create({
-  baseURL: 'http://localhost:5000/',
+  baseURL: BASE_URL,
 })
 
 const authInterceptor = (config: AxiosRequestConfig) => {

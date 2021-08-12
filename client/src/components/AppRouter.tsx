@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { Dispatch, FC, SetStateAction } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { publicRoutes } from '../routes'
 import MyPersons from '../pages/MyPersons'
@@ -8,9 +8,21 @@ import Person from '../pages/Person'
 const AppRouter: FC<{
   isAuth: boolean
   userId: number | null
-  persons: PersonType[]
-}> = ({ isAuth, userId, persons }) => {
-  console.log('au:', isAuth)
+  persons: { count: number; rows: PersonType[] }
+  setPersons: Dispatch<SetStateAction<{ count: number; rows: PersonType[] }>>
+  nextPage: number
+  isMorePages: boolean
+  setNextPage: Dispatch<SetStateAction<number>>
+}> = ({
+  isAuth,
+  userId,
+  persons,
+  setPersons,
+  nextPage,
+  setNextPage,
+  isMorePages,
+}) => {
+  //console.log('au:', isAuth)
 
   return (
     <Switch>
@@ -19,7 +31,16 @@ const AppRouter: FC<{
           <Route
             key={'/'}
             path={'/'}
-            render={() => <MyPersons userId={userId} persons={persons} />}
+            render={() => (
+              <MyPersons
+                userId={userId}
+                persons={persons}
+                setPersons={setPersons}
+                nextPage={nextPage}
+                setNextPage={setNextPage}
+                isMorePages={isMorePages}
+              />
+            )}
             exact
           />
           <Route
