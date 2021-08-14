@@ -11,18 +11,7 @@ const AppRouter: FC<{
   userId: number | null
   persons: { count: number; rows: PersonType[] }
   setPersons: Dispatch<SetStateAction<{ count: number; rows: PersonType[] }>>
-  nextPage: number
-  isMorePages: boolean
-  setNextPage: Dispatch<SetStateAction<number>>
-}> = ({
-  isAuth,
-  userId,
-  persons,
-  setPersons,
-  nextPage,
-  setNextPage,
-  isMorePages,
-}) => {
+}> = ({ isAuth, userId, persons, setPersons }) => {
   //console.log('au:', isAuth)
 
   return (
@@ -37,9 +26,6 @@ const AppRouter: FC<{
                 userId={userId}
                 persons={persons}
                 setPersons={setPersons}
-                nextPage={nextPage}
-                setNextPage={setNextPage}
-                isMorePages={isMorePages}
               />
             )}
             exact
@@ -47,7 +33,13 @@ const AppRouter: FC<{
           <Route
             key={'/new'}
             path={'/new'}
-            render={() => <NewPerson userId={userId} />}
+            render={() => (
+              <NewPerson
+                userId={userId}
+                persons={persons}
+                setPersons={setPersons}
+              />
+            )}
             exact
           />
           <Route

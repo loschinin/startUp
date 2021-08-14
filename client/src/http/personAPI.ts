@@ -1,4 +1,4 @@
-import { authHost, host } from './index'
+import { authHost } from './index'
 
 export const createPerson = async (person: FormData) => {
   const { data } = await authHost.post('api/person', person)
@@ -10,7 +10,7 @@ export const fetchPersons = async (
   limit: number,
   page: number
 ) => {
-  const { data } = await host.get(
+  const { data } = await authHost.get(
     `api/person?userId=${userId}&limit=${limit}&page=${page}`
   )
   return data

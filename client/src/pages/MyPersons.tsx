@@ -1,9 +1,9 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import styled from 'styled-components'
 import { StyledFC } from '../types'
 import { PersonType } from '../App'
 import { fetchPersons } from '../http/personAPI'
-import { BASE_URL, LIMIT } from '../constants'
+import { BASE_URL, LIMIT, NEXT_PAGE } from '../constants'
 import Button from '../components/Button'
 import { Link, useHistory } from 'react-router-dom'
 import Page from '../components/Page'
@@ -12,18 +12,7 @@ const _MyPersons: StyledFC<{
   userId: number
   persons: { count: number; rows: PersonType[] }
   setPersons: Dispatch<SetStateAction<{ count: number; rows: PersonType[] }>>
-  nextPage: number
-  setNextPage: Dispatch<SetStateAction<number>>
-  isMorePages: boolean
-}> = ({
-  className,
-  userId,
-  persons,
-  setPersons,
-  nextPage,
-  setNextPage,
-  isMorePages,
-}) => {
+}> = ({ className, userId, persons, setPersons }) => {
   const history = useHistory()
   //console.log(fetchPersons(userId, 4, 1))
   /*const [persons, setPersons] = useState({})
@@ -42,12 +31,18 @@ const _MyPersons: StyledFC<{
 
   //console.log('left', persons.count % LIMIT)
   //console.log('right', nextPage - 1)
-  const loadMore = () => {
-    setNextPage((prev) => prev + 1)
+  const [nextPage, setNextPage] = useState(NEXT_PAGE)
+  //const isMorePages = persons.count % LIMIT >= nextPage - 1
+  const isMorePages =
+    persons.count > persons.rows.length &&
+    Math.ceil(persons.count / LIMIT) >= nextPage - 1
+  const loadMore = async () => {
+    await setNextPage((prev) => prev + 1)
     if (isMorePages) {
-      fetchPersons(userId, LIMIT, nextPage).then(({ rows, count }) => {
-        setPersons({ count, rows: [...persons.rows, ...rows] })
-      })
+      const { rows, count } = await fetchPersons(userId, LIMIT, nextPage)
+      await setPersons({ count, rows: [...persons.rows, ...rows] })
+      await console.log('loadmre:', persons, { nextPage })
+      await console.log('rows:', rows)
     }
   }
 
@@ -58,7 +53,7 @@ const _MyPersons: StyledFC<{
         All: {persons.count} <hr />
       </div>
 
-      {persons.rows.reverse().map((p) => (
+      {persons.rows.map((p) => (
         <div key={p.id} className={'person-card'}>
           <div className={'name'}>
             ID: {p.id}. {p.name}

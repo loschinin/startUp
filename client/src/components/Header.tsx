@@ -4,7 +4,7 @@ import { StyledFC } from '../types'
 import { login, registration } from '../http/userAPI'
 import { fetchPersons } from '../http/personAPI'
 import { PersonType } from '../App'
-import { LIMIT } from '../constants'
+import { FIRST_PAGE, LIMIT } from '../constants'
 import Button from './Button'
 import Input from './Input'
 
@@ -22,7 +22,6 @@ const _Header: StyledFC<{
     }>
   >
   setPersons: Dispatch<SetStateAction<{ count: number; rows: PersonType[] }>>
-  setNextPage: Dispatch<SetStateAction<number>>
 }> = ({
   className,
   isAuth,
@@ -30,7 +29,6 @@ const _Header: StyledFC<{
   startAuthState,
   setStartAuthState,
   setPersons,
-  setNextPage,
 }) => {
   const [credentials, setCredentials] = useState({ email: '', password: '' })
   const [warnings, setWarnings] = useState('')
@@ -55,7 +53,7 @@ const _Header: StyledFC<{
 
   useMemo(() => {
     if (isAuth && userId) {
-      fetchPersons(userId, LIMIT, 1).then((res) => setPersons(res))
+      fetchPersons(userId, LIMIT, FIRST_PAGE).then((res) => setPersons(res))
     }
   }, [isAuth, userId, setPersons])
   const signIn = async () => {
@@ -78,7 +76,6 @@ const _Header: StyledFC<{
     //setCredentials({ email: '', password: '' })
     setWarnings('')
     setPersons({ count: 0, rows: [] })
-    setNextPage(2)
   }
   const signBtns: { [k: string]: () => Promise<void> } = {
     'sign in': () => signIn(),
