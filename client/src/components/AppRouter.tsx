@@ -4,6 +4,7 @@ import { publicRoutes } from '../routes'
 import MyPersons from '../pages/MyPersons'
 import { PersonType } from '../App'
 import Person from '../pages/Person'
+import NewPerson from '../pages/NewPerson'
 
 const AppRouter: FC<{
   isAuth: boolean
@@ -41,6 +42,12 @@ const AppRouter: FC<{
                 isMorePages={isMorePages}
               />
             )}
+            exact
+          />
+          <Route
+            key={'/new'}
+            path={'/new'}
+            render={() => <NewPerson userId={userId} />}
             exact
           />
           <Route

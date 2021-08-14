@@ -1,10 +1,6 @@
 import { authHost, host } from './index'
 
-export const createPerson = async (person: {
-  name: string
-  description: string
-  image: string
-}) => {
+export const createPerson = async (person: FormData) => {
   const { data } = await authHost.post('api/person', person)
   return data
 }

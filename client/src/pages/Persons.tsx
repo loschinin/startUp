@@ -1,17 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
 import { StyledFC } from '../types'
+import Page from '../components/Page'
 
 const _Persons: StyledFC = ({ className }) => {
-  return <div className={className}>persons</div>
+  return <Page className={className}>persons</Page>
 }
 
-const Persons = styled(_Persons)`
-  grid-area: content;
-  position: relative;
-  background-color: #895061;
-  color: aliceblue;
-  padding: 10px;
-`
+const Persons = styled(_Persons)``
 
 export default Persons

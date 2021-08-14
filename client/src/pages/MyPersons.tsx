@@ -5,6 +5,8 @@ import { PersonType } from '../App'
 import { fetchPersons } from '../http/personAPI'
 import { BASE_URL, LIMIT } from '../constants'
 import Button from '../components/Button'
+import { Link, useHistory } from 'react-router-dom'
+import Page from '../components/Page'
 
 const _MyPersons: StyledFC<{
   userId: number
@@ -22,6 +24,7 @@ const _MyPersons: StyledFC<{
   setNextPage,
   isMorePages,
 }) => {
+  const history = useHistory()
   //console.log(fetchPersons(userId, 4, 1))
   /*const [persons, setPersons] = useState({})
 
@@ -49,42 +52,38 @@ const _MyPersons: StyledFC<{
   }
 
   return (
-    <div className={className}>
+    <Page className={className}>
+      <Button onClick={() => history.push('/new')}>New Person</Button>
       <div>
         All: {persons.count} <hr />
       </div>
-      {persons.rows.map((p, i) => (
+
+      {persons.rows.reverse().map((p) => (
         <div key={p.id} className={'person-card'}>
           <div className={'name'}>
-            {i + 1}. {p.name}
+            ID: {p.id}. {p.name}
           </div>
           <div className={'description'}>{p.description}</div>
           <div className={'image'}>
-            <img src={`${BASE_URL}${p.image}`} alt={''} />
+            <Link to={`/${p.id}`}>
+              <img src={`${BASE_URL}${p.image}`} alt={''} />
+            </Link>
           </div>
         </div>
       ))}
-      {isMorePages && <Button onClick={() => loadMore()}>load more</Button>}
-    </div>
+      {isMorePages && <Button onClick={() => loadMore()}>show more</Button>}
+    </Page>
   )
 }
 
 const MyPersons = styled(_MyPersons)`
-  grid-area: content;
-  position: relative;
-  display: grid;
-  grid-auto-rows: min-content;
-  gap: 8px;
-  background-color: #895061;
-  color: aliceblue;
-  padding: 10px;
-  font-size: 20px;
   .person-card {
     display: grid;
     grid-gap: 8px;
     grid-template-areas:
       'image name'
       'image description';
+    grid-auto-columns: min-content;
   }
   .name {
     grid-area: name;

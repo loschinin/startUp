@@ -14,7 +14,7 @@ const _Button: StyledFC<{
 }
 
 const Button = styled(_Button)`
-  width: 50%;
+  width: 100%;
   //max-width: 180px;
   background: #0677a1;
   border: 2px solid #2d4159;

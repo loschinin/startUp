@@ -6,6 +6,7 @@ import { fetchPersons } from '../http/personAPI'
 import { PersonType } from '../App'
 import { LIMIT } from '../constants'
 import Button from './Button'
+import Input from './Input'
 
 const _Header: StyledFC<{
   isAuth: boolean
@@ -141,20 +142,6 @@ const Header = styled(_Header)`
   padding: 8px;
   @media (min-width: 415px) {
     grid-template-columns: 1fr 1fr 1fr;
-  }
-`
-
-const Input = styled.input`
-  width: 99%;
-  //max-width: 356px;
-  background: #895061;
-  border: 2px solid #2d4159;
-  color: #fff;
-  padding: 10px 0;
-  font-size: 20px;
-  @media (min-width: 415px) {
-    font-size: 15px;
-    padding: 4px 0;
   }
 `
 

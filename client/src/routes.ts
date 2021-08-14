@@ -1,6 +1,7 @@
 import Persons from './pages/Persons'
 import Person from './pages/Person'
 import MyPersons from './pages/MyPersons'
+//import NewPerson from './pages/NewPerson'
 
 export const authRoutes = [
   {
@@ -11,6 +12,10 @@ export const authRoutes = [
     path: '/',
     Component: MyPersons,
   },
+  /*{
+    path: '/new',
+    Component: NewPerson,
+  },*/
 ]
 
 export const publicRoutes = [
