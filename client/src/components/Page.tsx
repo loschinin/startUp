@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { StyledFC } from '../types'
+import { colors } from '../design/colors'
 
 const _Page: StyledFC = ({ className, children }) => {
   return <div className={className}>{children}</div>
@@ -11,8 +12,9 @@ const Page = styled(_Page)`
   display: grid;
   grid-auto-rows: min-content;
   gap: 8px;
-  background-color: #895061;
-  color: aliceblue;
+  min-height: 70vh;
+  background-color: ${colors.paperColor};
+  color: ${colors.primaryTextColor};
   padding: 10px;
   font-size: 20px;
 `

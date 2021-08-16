@@ -7,6 +7,7 @@ import { PersonType } from '../App'
 import { FIRST_PAGE, LIMIT } from '../constants'
 import Button from './Button'
 import Input from './Input'
+import { colors } from '../design/colors'
 
 const _Header: StyledFC<{
   isAuth: boolean
@@ -22,6 +23,7 @@ const _Header: StyledFC<{
     }>
   >
   setPersons: Dispatch<SetStateAction<{ count: number; rows: PersonType[] }>>
+  setWarnings: Dispatch<SetStateAction<string>>
 }> = ({
   className,
   isAuth,
@@ -29,9 +31,9 @@ const _Header: StyledFC<{
   startAuthState,
   setStartAuthState,
   setPersons,
+  setWarnings,
 }) => {
   const [credentials, setCredentials] = useState({ email: '', password: '' })
-  const [warnings, setWarnings] = useState('')
   const email = startAuthState.email
   useMemo(() => {
     if (email) setCredentials({ email, password: '' })
@@ -39,8 +41,13 @@ const _Header: StyledFC<{
 
   const regMe = async () => {
     try {
-      await registration(credentials.email, credentials.password)
-      await setIsAuth(true)
+      const { id, email } = await registration(
+        credentials.email,
+        credentials.password
+      )
+      setIsAuth(true)
+      setWarnings('')
+      await setStartAuthState({ userId: id, email })
     } catch (e) {
       if (e.message.includes(409)) {
         setWarnings('Email already exists')
@@ -63,6 +70,7 @@ const _Header: StyledFC<{
       await setStartAuthState({ userId: id, email })
       //await fetchPersons(id, 4, 1)
       //setPersons(p)
+      setWarnings('')
     } catch (e) {
       if (e.message.includes(401)) {
         setWarnings('Email or pwd incorrect')
@@ -120,7 +128,6 @@ const _Header: StyledFC<{
             {s}
           </Button>
         ))}
-        <div style={{ color: 'pink', textAlign: 'center' }}>{warnings}</div>
       </div>
     </div>
   )
@@ -133,9 +140,9 @@ const Header = styled(_Header)`
   grid-template-columns: 1fr;
   align-items: center;
   //grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  background-color: #78244c;
+  background-color: ${colors.paperColor};
   //height: 10%;
-  color: #fff;
+  color: ${colors.primaryTextColor};
   padding: 8px;
   @media (min-width: 415px) {
     grid-template-columns: 1fr 1fr 1fr;

@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react'
 import styled from 'styled-components'
 import { StyledFC } from '../types'
+import { colors } from '../design/colors'
 
 const _Input: StyledFC<{
   type: string
@@ -23,9 +24,9 @@ const _Input: StyledFC<{
 const Input = styled(_Input)`
   width: 99%;
   //max-width: 356px;
-  background: #895061;
-  border: 2px solid #2d4159;
-  color: #fff;
+  background: ${colors.backgroundColor};
+  border: 2px solid ${colors.backgroundColor};
+  color: ${colors.primaryTextColor};
   padding: 10px 0;
   font-size: 20px;
   @media (min-width: 415px) {

@@ -7,6 +7,8 @@ import { StyledFC } from './types'
 import styled from 'styled-components'
 import Footer from './components/Footer'
 import jwtDecode from 'jwt-decode'
+import { colors } from './design/colors'
+import Warnings from './components/Warnings'
 
 export type PersonType = {
   id: number
@@ -66,7 +68,7 @@ const _App: StyledFC = ({ className }) => {
   const [persons, setPersons] = useState<{ count: number; rows: PersonType[] }>(
     { count: 0, rows: [] }
   )
-
+  const [warnings, setWarnings] = useState('')
   //console.log(persons)
   return (
     <BrowserRouter>
@@ -77,12 +79,15 @@ const _App: StyledFC = ({ className }) => {
           startAuthState={startAuthState}
           setStartAuthState={setStartAuthState}
           setPersons={setPersons}
+          setWarnings={setWarnings}
         />
+        <Warnings warnings={warnings} />
         <AppRouter
           isAuth={isAuth}
           userId={startAuthState.userId}
           persons={persons}
           setPersons={setPersons}
+          setWarnings={setWarnings}
         />
         <Footer />
       </div>
@@ -92,14 +97,13 @@ const _App: StyledFC = ({ className }) => {
 const App = styled(_App)`
   display: grid;
   grid-gap: 8px;
-  grid-template-rows: 1fr 10fr 2fr;
+  //grid-template-rows: 1fr 10fr 2fr;
   grid-template-areas:
     'header'
+    'warnings'
     'content'
     'footer';
-  //background-color: #262525;
-  background-color: #59253a;
-  //padding: 4px;
+  background-color: ${colors.backgroundColor};
 `
 
 export default App

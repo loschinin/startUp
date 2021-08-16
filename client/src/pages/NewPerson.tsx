@@ -13,14 +13,14 @@ const _NewPerson: StyledFC<{
   userId: number
   persons: { count: number; rows: PersonType[] }
   setPersons: Dispatch<SetStateAction<{ count: number; rows: PersonType[] }>>
-}> = ({ className, userId, persons, setPersons }) => {
+  setWarnings: Dispatch<SetStateAction<string>>
+}> = ({ className, userId, persons, setPersons, setWarnings }) => {
   const history = useHistory()
 
   const [inputsState, setInputsState] = useState<{
     name: string
     description: string
     imageFile: string | Blob
-    rawFileName: string
     momId: number
     dadId: number
     userId: number
@@ -28,7 +28,6 @@ const _NewPerson: StyledFC<{
     name: '',
     description: '',
     imageFile: '',
-    rawFileName: '',
     momId: 0,
     dadId: 0,
     userId,
@@ -62,9 +61,7 @@ const _NewPerson: StyledFC<{
         setInputsState({
           ...inputsState,
           imageFile: e.target.files ? e.target.files[0] : '',
-          rawFileName: e.target.files ? e.target.files[0].name : '',
         })
-        console.log(e.target.files ? e.target.files[0].name : '')
       },
     },
     momId: {
@@ -91,18 +88,22 @@ const _NewPerson: StyledFC<{
     formData.append('momId', inputsState.momId.toString())
     formData.append('dadId', inputsState.dadId.toString())
     formData.append('userId', userId.toString())
-    console.log({ formData })
+    //console.log({ formData })
     //createDevice(formData).then((data) => onHide())
+    try {
+      const { id } = await createPerson(formData)
+      const newPerson = await fetchPerson(id)
+      setPersons({
+        count: persons.count + 1,
+        rows: [newPerson, ...persons.rows.slice(0, LIMIT - 1)],
+      })
+      history.goBack()
+      setWarnings('')
+    } catch (e) {
+      //console.log(e.message)
+      setWarnings(e.message)
+    }
 
-    const { id } = await createPerson(formData)
-    //console.log({ id })
-    //await setPersons({ ...persons, rows: [] })
-    const newPerson = await fetchPerson(id)
-    setPersons({
-      count: persons.count + 1,
-      rows: [newPerson, ...persons.rows.slice(0, LIMIT - 1)],
-    })
-    history.goBack()
     //console.log({ result })
     //console.log({ persons })
   }
@@ -121,7 +122,13 @@ const _NewPerson: StyledFC<{
           onChange={inputs[i].onChange}
         />
       ))}
-      <Button onClick={() => saveNewPerson()}>Save new person</Button>
+      <Button
+        disabled={!(inputsState.name && inputsState.imageFile)}
+        primary
+        onClick={() => saveNewPerson()}
+      >
+        Save new person
+      </Button>
     </Page>
   )
 }

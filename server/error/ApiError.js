@@ -9,6 +9,10 @@ class ApiError extends Error {
     return new ApiError(404, message);
   }
 
+  static noImage(message) {
+    return new ApiError(404, message);
+  }
+
   static noCredentials(message) {
     return new ApiError(401, message);
   }

@@ -11,7 +11,8 @@ const AppRouter: FC<{
   userId: number | null
   persons: { count: number; rows: PersonType[] }
   setPersons: Dispatch<SetStateAction<{ count: number; rows: PersonType[] }>>
-}> = ({ isAuth, userId, persons, setPersons }) => {
+  setWarnings: Dispatch<SetStateAction<string>>
+}> = ({ isAuth, userId, persons, setPersons, setWarnings }) => {
   //console.log('au:', isAuth)
 
   return (
@@ -38,6 +39,7 @@ const AppRouter: FC<{
                 userId={userId}
                 persons={persons}
                 setPersons={setPersons}
+                setWarnings={setWarnings}
               />
             )}
             exact

@@ -7,6 +7,7 @@ import { BASE_URL, LIMIT, NEXT_PAGE } from '../constants'
 import Button from '../components/Button'
 import { Link, useHistory } from 'react-router-dom'
 import Page from '../components/Page'
+import { colors } from '../design/colors'
 
 const _MyPersons: StyledFC<{
   userId: number
@@ -85,7 +86,7 @@ const MyPersons = styled(_MyPersons)`
   }
   .description {
     grid-area: description;
-    color: #b3b2b2;
+    color: ${colors.secondaryTextColor};
     text-overflow: ellipsis;
     overflow: hidden;
     max-width: 300px;
