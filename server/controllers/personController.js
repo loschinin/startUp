@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 const ApiError = require("../error/ApiError");
 const { Person } = require("../models/models");
 const path = require("path");
@@ -49,6 +51,21 @@ class PersonController {
     const { id } = req.params;
     const person = await Person.findOne({ where: { id } });
     return res.json(person);
+  }
+
+  async deleteOne(req, res, next) {
+    try {
+      const { id } = req.params;
+      const person = await Person.findOne({ where: { id } });
+      await person.destroy();
+      await fs.unlink(
+        path.resolve(__dirname, "..", "static", person.image),
+        () => console.log(`file ${person.image} deleted`)
+      );
+      return res.json({ message: `Person ${person.name} was deleted from db` });
+    } catch (e) {
+      next(ApiError.badRequest(e.message));
+    }
   }
 }
 

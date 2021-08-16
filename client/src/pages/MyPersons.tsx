@@ -2,8 +2,8 @@ import React, { Dispatch, SetStateAction, useState } from 'react'
 import styled from 'styled-components'
 import { StyledFC } from '../types'
 import { PersonType } from '../App'
-import { fetchPersons } from '../http/personAPI'
-import { BASE_URL, LIMIT, NEXT_PAGE } from '../constants'
+import { deletePerson, fetchPersons } from '../http/personAPI'
+import { BASE_URL, FIRST_PAGE, LIMIT, NEXT_PAGE } from '../constants'
 import Button from '../components/Button'
 import { Link, useHistory } from 'react-router-dom'
 import Page from '../components/Page'
@@ -42,9 +42,16 @@ const _MyPersons: StyledFC<{
     if (isMorePages) {
       const { rows, count } = await fetchPersons(userId, LIMIT, nextPage)
       await setPersons({ count, rows: [...persons.rows, ...rows] })
-      await console.log('loadmre:', persons, { nextPage })
-      await console.log('rows:', rows)
+      console.log('loadmre:', persons, { nextPage })
+      console.log('rows:', rows)
     }
+  }
+
+  const deletePersonHandler = async (personId: number) => {
+    const res = await deletePerson(personId)
+    const { rows, count } = await fetchPersons(userId, LIMIT, FIRST_PAGE)
+    await setPersons({ count, rows })
+    console.log(res)
   }
 
   return (
@@ -65,6 +72,9 @@ const _MyPersons: StyledFC<{
               <img src={`${BASE_URL}${p.image}`} alt={''} />
             </Link>
           </div>
+          <Button className={'del'} onClick={() => deletePersonHandler(p.id)}>
+            x
+          </Button>
         </div>
       ))}
       {isMorePages && <Button onClick={() => loadMore()}>show more</Button>}
@@ -77,8 +87,8 @@ const MyPersons = styled(_MyPersons)`
     display: grid;
     grid-gap: 8px;
     grid-template-areas:
-      'image name'
-      'image description';
+      'image name del'
+      'image description del';
     grid-auto-columns: min-content;
   }
   .name {
@@ -101,6 +111,9 @@ const MyPersons = styled(_MyPersons)`
     img {
       width: 55px;
       height: 55px;
+    }
+    .del {
+      grid-area: del;
     }
   }
 `

@@ -20,3 +20,8 @@ export const fetchPerson = async (id: number) => {
   const { data } = await authHost.get(`api/person/${id}`)
   return data
 }
+
+export const deletePerson = async (id: number) => {
+  const { data } = await authHost.delete(`api/person/${id}`)
+  return data
+}
