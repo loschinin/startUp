@@ -72,7 +72,16 @@ const _App: StyledFC = ({ className }) => {
   //console.log(persons)
   return (
     <BrowserRouter>
-      <div className={className}>
+      <div
+        className={className}
+        style={{
+          gridTemplateAreas: `${
+            warnings
+              ? "'header' 'warnings' 'content' 'footer'"
+              : "'header' 'content' 'footer'"
+          }`,
+        }}
+      >
         <Header
           isAuth={isAuth}
           setIsAuth={setIsAuth}
@@ -98,11 +107,7 @@ const App = styled(_App)`
   display: grid;
   grid-gap: 8px;
   //grid-template-rows: 1fr 10fr 2fr;
-  grid-template-areas:
-    'header'
-    'warnings'
-    'content'
-    'footer';
+
   background-color: ${colors.backgroundColor};
 `
 

@@ -43,7 +43,7 @@ const _NewPerson: StyledFC<{
   } = {
     name: {
       type: 'text',
-      placeholder: 'name',
+      placeholder: 'name*',
       value: inputsState.name,
       onChange: (e) => setInputsState({ ...inputsState, name: e.target.value }),
     },
