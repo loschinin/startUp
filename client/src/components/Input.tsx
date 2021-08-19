@@ -5,7 +5,7 @@ import { colors } from '../design/colors'
 
 const _Input: StyledFC<{
   type: string
-  placeholder: string
+  placeholder?: string
   value?: string | number
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
 }> = ({ className, children, type, placeholder, value, onChange }) => {

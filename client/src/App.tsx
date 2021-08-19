@@ -17,8 +17,8 @@ export type PersonType = {
   image: string
   momId: number | null
   dadId: number | null
-  createdAt: Date
-  updatedAt: Date
+  createdAt?: Date
+  updatedAt?: Date
   userId: number
 }
 export type DecodedToken = {
@@ -90,7 +90,7 @@ const _App: StyledFC = ({ className }) => {
           setPersons={setPersons}
           setWarnings={setWarnings}
         />
-        <Warnings warnings={warnings} />
+        {warnings && <Warnings warnings={warnings} />}
         <AppRouter
           isAuth={isAuth}
           userId={startAuthState.userId}

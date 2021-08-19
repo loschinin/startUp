@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 import { publicRoutes } from '../routes'
 import MyPersons from '../pages/MyPersons'
 import { PersonType } from '../App'
-import Person from '../pages/Person'
+import EditPerson from '../pages/EditPerson'
 import NewPerson from '../pages/NewPerson'
 
 const AppRouter: FC<{
@@ -47,7 +47,14 @@ const AppRouter: FC<{
           <Route
             key={'/:id'}
             path={'/:id'}
-            render={() => <Person userId={userId} />}
+            render={() => (
+              <EditPerson
+                userId={userId}
+                persons={persons}
+                setPersons={setPersons}
+                setWarnings={setWarnings}
+              />
+            )}
             exact
           />
         </Switch>

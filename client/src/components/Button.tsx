@@ -4,7 +4,7 @@ import { StyledFC } from '../types'
 import { colors } from '../design/colors'
 
 const _Button: StyledFC<{
-  onClick: () => Promise<void> | void
+  onClick: (e: React.MouseEvent<HTMLElement>) => Promise<void> | void
   disabled?: boolean
   primary?: boolean
 }> = ({ className, onClick, disabled, children }) => {
@@ -17,7 +17,7 @@ const _Button: StyledFC<{
 
 const Button = styled(_Button)`
   width: 100%;
-  //max-width: 180px;
+  min-width: 70px;
   background: ${(props) =>
     props.primary ? colors.primaryButtonColor : colors.secondaryButtonColor};
   border: 2px solid

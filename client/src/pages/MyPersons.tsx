@@ -2,8 +2,8 @@ import React, { Dispatch, SetStateAction, useState } from 'react'
 import styled from 'styled-components'
 import { StyledFC } from '../types'
 import { PersonType } from '../App'
-import { deletePerson, fetchPersons } from '../http/personAPI'
-import { BASE_URL, FIRST_PAGE, LIMIT, NEXT_PAGE } from '../constants'
+import { fetchPersons } from '../http/personAPI'
+import { BASE_URL, LIMIT, NEXT_PAGE } from '../constants'
 import Button from '../components/Button'
 import { Link, useHistory } from 'react-router-dom'
 import Page from '../components/Page'
@@ -41,18 +41,48 @@ const _MyPersons: StyledFC<{
     await setNextPage((prev) => prev + 1)
     if (isMorePages) {
       const { rows, count } = await fetchPersons(userId, LIMIT, nextPage)
-      await setPersons({ count, rows: [...persons.rows, ...rows] })
+      setPersons({ count, rows: [...persons.rows, ...rows] })
       console.log('loadmre:', persons, { nextPage })
       console.log('rows:', rows)
     }
   }
-
-  const deletePersonHandler = async (personId: number) => {
-    const res = await deletePerson(personId)
-    const { rows, count } = await fetchPersons(userId, LIMIT, FIRST_PAGE)
-    await setPersons({ count, rows })
-    console.log(res)
+  /*  const loadMore2 = () => {
+    setCurrentPage((prev) => prev + 1)
   }
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const [personsPerPage] = useState(3)*/
+  /*
+  useEffect(() => {
+    const retrievePersons = async () => {
+      const { rows, count } = await fetchPersons(
+        userId,
+        personsPerPage,
+        currentPage
+      )
+      setPersons({ count, rows: [...persons.rows, ...rows] })
+    }
+    retrievePersons()
+  }, [currentPage])*/
+  /*  const lastPersonIndex = currentPage * personsPerPage
+  const firstPersonIndex = lastPersonIndex - personsPerPage
+  const currentPerson = persons.rows.slice(firstPersonIndex, lastPersonIndex)
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber)
+  console.log(currentPerson)*/
+  //const [deletedId, setDeletedId] = useState(0)
+  /*const deletePersonHandler = async (personId: number) => {
+    const { id } = await deletePerson(personId)
+    //const { rows, count } = await fetchPersons(userId, LIMIT, FIRST_PAGE)
+    //setPersons({ count, rows })
+    const minusOnePersons = persons.rows.filter((p) => p.id !== id)
+
+    console.log({ minusOnePersons })
+    console.log({ persons })
+    //console.log({ e })
+    //setDeletedId(id)
+    setPersons({ count: persons.count - 1, rows: minusOnePersons })
+    setNextPage(FIRST_PAGE)
+  }*/
 
   return (
     <Page className={className}>
@@ -63,18 +93,24 @@ const _MyPersons: StyledFC<{
 
       {persons.rows.map((p) => (
         <div key={p.id} className={'person-card'}>
-          <div className={'name'}>
-            ID: {p.id}. {p.name}
-          </div>
-          <div className={'description'}>{p.description}</div>
           <div className={'image'}>
             <Link to={`/${p.id}`}>
               <img src={`${BASE_URL}${p.image}`} alt={''} />
             </Link>
           </div>
-          <Button className={'del'} onClick={() => deletePersonHandler(p.id)}>
+          <div className={'person-text'}>
+            <div className={'name'}>
+              ID: {p.id}. {p.name}
+            </div>
+            <div className={'description'}>{p.description}</div>
+          </div>
+          {/*          <Button
+            className={'del'}
+            //disabled={p.id === deletedId}
+            onClick={() => deletePersonHandler(p.id)}
+          >
             x
-          </Button>
+          </Button>*/}
         </div>
       ))}
       {isMorePages && <Button onClick={() => loadMore()}>show more</Button>}
@@ -86,16 +122,21 @@ const MyPersons = styled(_MyPersons)`
   .person-card {
     display: grid;
     grid-gap: 8px;
-    grid-template-areas:
-      'image name del'
-      'image description del';
-    grid-auto-columns: min-content;
+    grid-template-columns: 1fr 6fr;
+    /*grid-template-areas:
+      'image name name name'
+      'image description description description';
+    */
+    //grid-auto-columns: min-content;
+  }
+  .person-text {
+    align-self: center;
   }
   .name {
-    grid-area: name;
+    //grid-area: name;
   }
   .description {
-    grid-area: description;
+    //grid-area: description;
     color: ${colors.secondaryTextColor};
     text-overflow: ellipsis;
     overflow: hidden;
@@ -103,7 +144,7 @@ const MyPersons = styled(_MyPersons)`
     white-space: nowrap;
   }
   .image {
-    grid-area: image;
+    //grid-area: image;
     overflow: hidden;
     border-radius: 50%;
     width: 55px;
@@ -112,9 +153,9 @@ const MyPersons = styled(_MyPersons)`
       width: 55px;
       height: 55px;
     }
-    .del {
+    /*.del {
       grid-area: del;
-    }
+    }*/
   }
 `
 

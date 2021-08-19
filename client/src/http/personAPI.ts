@@ -5,6 +5,11 @@ export const createPerson = async (person: FormData) => {
   return data
 }
 
+export const updatePerson = async (person: FormData, id: number) => {
+  const { data } = await authHost.patch(`api/person/${id}`, person)
+  return data
+}
+
 export const fetchPersons = async (
   userId: number,
   limit: number,

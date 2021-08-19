@@ -25,7 +25,7 @@ const _NewPerson: StyledFC<{
     dadId: number
     userId: number
   }>({
-    name: '',
+    name: 'Some name',
     description: '',
     imageFile: '',
     momId: 0,

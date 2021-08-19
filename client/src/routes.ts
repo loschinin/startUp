@@ -1,12 +1,12 @@
 import Persons from './pages/Persons'
-import Person from './pages/Person'
+import EditPerson from './pages/EditPerson'
 import MyPersons from './pages/MyPersons'
 //import NewPerson from './pages/NewPerson'
 
 export const authRoutes = [
   {
     path: '/:id',
-    Component: Person,
+    Component: EditPerson,
   },
   {
     path: '/',
