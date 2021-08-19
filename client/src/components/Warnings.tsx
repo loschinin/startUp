@@ -1,5 +1,5 @@
 import React from 'react'
-import { colors } from '../design/colors'
+import { colors } from '../design'
 import { StyledFC } from '../types'
 import styled from 'styled-components'
 

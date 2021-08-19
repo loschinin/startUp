@@ -11,10 +11,16 @@ import { StyledFC } from '../types'
 import Button from '../components/Button'
 import { useHistory, useParams } from 'react-router-dom'
 import Page from '../components/Page'
-import { fetchPerson, updatePerson } from '../http/personAPI'
+import {
+  deletePerson,
+  fetchPerson,
+  fetchPersons,
+  updatePerson,
+} from '../http/personAPI'
 import { PersonType } from '../App'
-import { BASE_URL } from '../constants'
+import { BASE_URL, FIRST_PAGE, LIMIT } from '../constants'
 import Input from '../components/Input'
+import TextArea from '../components/TextArea'
 
 type InputsStateType = {
   name: string
@@ -183,6 +189,7 @@ const _EditPerson: StyledFC<{
         dadId,
         userId,
         createdAt,
+        updatedAt: new Date().toISOString(),
       }
       setPersons({
         ...persons,
@@ -219,6 +226,21 @@ const _EditPerson: StyledFC<{
   //console.log('IMAGE BUFFER', imageBuffer)
   //console.log('INPUTSTATEIMAGE', inputsState.image)
   //console.log('compareObject:', initialInputsState == inputsState)
+  const deletePersonHandler = async (personId: number) => {
+    const { id } = await deletePerson(personId)
+    //const { rows, count } = await fetchPersons(userId, LIMIT, FIRST_PAGE)
+    //setPersons({ count, rows })
+    const minusOnePersons = persons.rows.filter((p) => p.id !== id)
+
+    console.log({ minusOnePersons })
+    console.log({ persons })
+    await fetchPersons(userId, LIMIT, FIRST_PAGE).then((res) => setPersons(res))
+    history.goBack()
+    //console.log({ e })
+    //setDeletedId(id)
+    //setPersons({ count: persons.count - 1, rows: minusOnePersons })
+    //setNextPage(FIRST_PAGE)
+  }
   return (
     <Page className={className}>
       <Button onClick={() => history.goBack()}>Go back</Button>
@@ -226,31 +248,61 @@ const _EditPerson: StyledFC<{
         <hr />
       </div>
       {(imageBuffer || inputsState.image) && (
-        <div className={'image'}>
-          <img
+        <div
+          className={'image'}
+          style={{
+            backgroundImage: `url(${
+              imageBuffer || BASE_URL + inputsState.image
+            })`,
+          }}
+        >
+          {/*<img
             src={`${imageBuffer || BASE_URL + inputsState.image}`}
             alt={''}
-          />
+          />*/}
         </div>
       )}
-
-      {Object.keys(inputs).map((i) => (
-        <Input
-          key={i}
-          type={inputs[i].type}
-          placeholder={inputs[i].placeholder}
-          value={inputs[i].value}
-          onChange={inputs[i].onChange}
-        />
-      ))}
+      <div>Person ID: {id}</div>
+      {Object.keys(inputs).map((i, index) =>
+        index !== 1 ? (
+          <Input
+            key={i}
+            type={inputs[i].type}
+            placeholder={inputs[i].placeholder}
+            value={inputs[i].value}
+            onChange={inputs[i].onChange}
+          />
+        ) : (
+          <TextArea
+            rows={7}
+            key={i}
+            placeholder={inputs[i].placeholder}
+            value={inputs[i].value}
+            onChange={
+              inputs[i].onChange as unknown as (
+                e: ChangeEvent<HTMLTextAreaElement>
+              ) => void
+            }
+          />
+        )
+      )}
       <Button
         disabled={
-          JSON.stringify(initialInputsState) === JSON.stringify(inputsState)
+          JSON.stringify(initialInputsState) === JSON.stringify(inputsState) ||
+          !inputsState.name
         }
         primary
         onClick={() => savePerson()}
       >
-        Save person
+        Save changes
+      </Button>
+      <Button
+        danger
+        className={'del'}
+        //disabled={p.id === deletedId}
+        onClick={() => deletePersonHandler(+id)}
+      >
+        Remove all data about the person from database
       </Button>
     </Page>
   )
@@ -262,11 +314,13 @@ const EditPerson = styled(_EditPerson)`
     overflow: hidden;
     border-radius: 0;
     width: 100%;
-    height: 150px;
+    height: 300px;
+    background-size: cover;
+    background-position: center;
 
-    img {
+    /*img {
       width: 100%;
-    }
+    }*/
     /*.del {
       grid-area: del;
     }*/

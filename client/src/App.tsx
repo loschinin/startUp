@@ -7,7 +7,7 @@ import { StyledFC } from './types'
 import styled from 'styled-components'
 import Footer from './components/Footer'
 import jwtDecode from 'jwt-decode'
-import { colors } from './design/colors'
+import { colors } from './design'
 import Warnings from './components/Warnings'
 
 export type PersonType = {
@@ -17,8 +17,8 @@ export type PersonType = {
   image: string
   momId: number | null
   dadId: number | null
-  createdAt?: Date
-  updatedAt?: Date
+  createdAt?: string
+  updatedAt?: string
   userId: number
 }
 export type DecodedToken = {

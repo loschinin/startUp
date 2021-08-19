@@ -1,12 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
 import { StyledFC } from '../types'
-import { colors } from '../design/colors'
+import { colors } from '../design'
 
 const _Button: StyledFC<{
   onClick: (e: React.MouseEvent<HTMLElement>) => Promise<void> | void
   disabled?: boolean
   primary?: boolean
+  secondary?: boolean
+  danger?: boolean
 }> = ({ className, onClick, disabled, children }) => {
   return (
     <button className={className} onClick={onClick} disabled={disabled}>
@@ -24,10 +26,14 @@ const Button = styled(_Button)`
     ${(props) =>
       props.primary
         ? colors.primaryButtonTextColor
+        : props.danger
+        ? colors.dangerButtonTextColor
         : colors.secondaryButtonTextColor};
   color: ${(props) =>
     props.primary
       ? colors.primaryButtonTextColor
+      : props.danger
+      ? colors.dangerButtonTextColor
       : colors.secondaryButtonTextColor};
   padding: 8px;
   cursor: pointer;

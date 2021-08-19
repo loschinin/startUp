@@ -6,8 +6,9 @@ import { StyledFC } from '../types'
 import styled from 'styled-components'
 import Page from '../components/Page'
 import { createPerson, fetchPerson } from '../http/personAPI'
-import { LIMIT } from '../constants'
+import { BASE_URL, LIMIT } from '../constants'
 import { PersonType } from '../App'
+import TextArea from '../components/TextArea'
 
 const _NewPerson: StyledFC<{
   userId: number
@@ -16,7 +17,7 @@ const _NewPerson: StyledFC<{
   setWarnings: Dispatch<SetStateAction<string>>
 }> = ({ className, userId, persons, setPersons, setWarnings }) => {
   const history = useHistory()
-
+  const [imageBuffer, setImageBuffer] = useState<string | ArrayBuffer>('')
   const [inputsState, setInputsState] = useState<{
     name: string
     description: string
@@ -58,10 +59,29 @@ const _NewPerson: StyledFC<{
       type: 'file',
       placeholder: 'image',
       onChange: (e) => {
-        setInputsState({
+        /** IF IMG SELECTED */
+        if (e.target.files && e.target.files[0]) {
+          const reader = new FileReader()
+          reader.onloadend = function () {
+            const result = reader.result
+            if (result) setImageBuffer(result)
+          }
+          reader.readAsDataURL(e.target.files[0])
+          setInputsState({
+            ...inputsState,
+            imageFile: e.target.files[0],
+          })
+        } else {
+          setInputsState({
+            ...inputsState,
+            imageFile: '',
+          })
+          setImageBuffer('')
+        }
+        /*setInputsState({
           ...inputsState,
           imageFile: e.target.files ? e.target.files[0] : '',
-        })
+        })*/
       },
     },
     momId: {
@@ -80,6 +100,7 @@ const _NewPerson: StyledFC<{
     },
   }
   //console.log(inputsState)
+
   const saveNewPerson = async () => {
     const formData = new FormData()
     formData.append('name', inputsState.name)
@@ -107,21 +128,46 @@ const _NewPerson: StyledFC<{
     //console.log({ result })
     //console.log({ persons })
   }
+
   return (
     <Page className={className}>
       <Button onClick={() => history.goBack()}>Go back</Button>
       <div>
         <hr />
       </div>
-      {Object.keys(inputs).map((i) => (
-        <Input
-          key={i}
-          type={inputs[i].type}
-          placeholder={inputs[i].placeholder}
-          value={inputs[i].value}
-          onChange={inputs[i].onChange}
-        />
-      ))}
+      {(imageBuffer || '') && (
+        <div
+          className={'image'}
+          style={{
+            backgroundImage: `url(${imageBuffer})`,
+          }}
+        >
+          {/*<img src={`${imageBuffer}`} alt={''} />*/}
+        </div>
+      )}
+      {Object.keys(inputs).map((i, index) =>
+        index !== 1 ? (
+          <Input
+            key={i}
+            type={inputs[i].type}
+            placeholder={inputs[i].placeholder}
+            value={inputs[i].value}
+            onChange={inputs[i].onChange}
+          />
+        ) : (
+          <TextArea
+            rows={7}
+            key={i}
+            placeholder={inputs[i].placeholder}
+            value={inputs[i].value}
+            onChange={
+              inputs[i].onChange as unknown as (
+                e: ChangeEvent<HTMLTextAreaElement>
+              ) => void
+            }
+          />
+        )
+      )}
       <Button
         disabled={!(inputsState.name && inputsState.imageFile)}
         primary
@@ -133,6 +179,23 @@ const _NewPerson: StyledFC<{
   )
 }
 
-const NewPerson = styled(_NewPerson)``
+const NewPerson = styled(_NewPerson)`
+  .image {
+    //grid-area: image;
+    overflow: hidden;
+    border-radius: 0;
+    width: 100%;
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+
+    img {
+      width: 100%;
+    }
+    /*.del {
+      grid-area: del;
+    }*/
+  }
+`
 
 export default NewPerson

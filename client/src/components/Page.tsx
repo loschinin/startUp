@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { StyledFC } from '../types'
-import { colors } from '../design/colors'
+import { colors } from '../design'
 
 const _Page: StyledFC = ({ className, children }) => {
   return <div className={className}>{children}</div>

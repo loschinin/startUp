@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyledFC } from '../types'
 import styled from 'styled-components'
-import { colors } from '../design/colors'
+import { colors } from '../design'
 
 const _Footer: StyledFC = ({ className }) => {
   return <div className={className}>Footer</div>

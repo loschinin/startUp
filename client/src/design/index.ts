@@ -7,6 +7,7 @@ export const colors = {
   primaryButtonTextColor: '#FFCB9A',
   secondaryButtonColor: 'transparent',
   secondaryButtonTextColor: '#D1E8E2',
-  disabledButtonTextColor: '#2C3531',
+  dangerButtonTextColor: 'rgb(238,84,57)',
+  disabledButtonTextColor: '#3f4542',
   warningTextColor: 'rgb(250,4,90)',
 }

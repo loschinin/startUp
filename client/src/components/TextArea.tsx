@@ -3,25 +3,25 @@ import styled from 'styled-components'
 import { StyledFC } from '../types'
 import { colors } from '../design'
 
-const _Input: StyledFC<{
-  type: string
+const _TextArea: StyledFC<{
+  rows: number
   placeholder?: string
   value?: string | number
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void
-}> = ({ className, children, type, placeholder, value, onChange }) => {
+  onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void
+}> = ({ className, children, placeholder, value, onChange, rows }) => {
   return (
-    <input
-      type={type}
+    <textarea
+      rows={rows}
       placeholder={placeholder}
       value={value}
       onChange={onChange}
       className={className}
     >
       {children}
-    </input>
+    </textarea>
   )
 }
-const Input = styled(_Input)`
+const TextArea = styled(_TextArea)`
   width: 99%;
   //max-width: 356px;
   background: ${colors.backgroundColor};
@@ -34,4 +34,4 @@ const Input = styled(_Input)`
     padding: 4px 0;
   }
 `
-export default Input
+export default TextArea

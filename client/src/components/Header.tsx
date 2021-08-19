@@ -7,7 +7,7 @@ import { PersonType } from '../App'
 import { FIRST_PAGE, LIMIT } from '../constants'
 import Button from './Button'
 import Input from './Input'
-import { colors } from '../design/colors'
+import { colors } from '../design'
 
 const _Header: StyledFC<{
   isAuth: boolean

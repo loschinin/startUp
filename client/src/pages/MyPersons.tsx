@@ -5,9 +5,11 @@ import { PersonType } from '../App'
 import { fetchPersons } from '../http/personAPI'
 import { BASE_URL, LIMIT, NEXT_PAGE } from '../constants'
 import Button from '../components/Button'
-import { Link, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import Page from '../components/Page'
-import { colors } from '../design/colors'
+import { colors } from '../design'
+import ReactHtmlParser from 'react-html-parser'
+import { dateConvert } from '../utils'
 
 const _MyPersons: StyledFC<{
   userId: number
@@ -83,7 +85,7 @@ const _MyPersons: StyledFC<{
     setPersons({ count: persons.count - 1, rows: minusOnePersons })
     setNextPage(FIRST_PAGE)
   }*/
-
+  //console.log({ persons })
   return (
     <Page className={className}>
       <Button onClick={() => history.push('/new')}>New Person</Button>
@@ -93,17 +95,27 @@ const _MyPersons: StyledFC<{
 
       {persons.rows.map((p) => (
         <div key={p.id} className={'person-card'}>
-          <div className={'image'}>
-            <Link to={`/${p.id}`}>
-              <img src={`${BASE_URL}${p.image}`} alt={''} />
-            </Link>
+          <div
+            className={'image'}
+            style={{ backgroundImage: `url(${BASE_URL}${p.image})` }}
+          >
+            {/*<img src={`${BASE_URL}${p.image}`} alt={''} />*/}
           </div>
-          <div className={'person-text'}>
-            <div className={'name'}>
-              ID: {p.id}. {p.name}
-            </div>
-            <div className={'description'}>{p.description}</div>
+
+          <div className={'name'}>
+            ID: {p.id}. {p.name}
           </div>
+
+          <div className={'created'}>
+            Created: {p.createdAt && dateConvert(p.createdAt)}
+            <br />
+            Updated: {p.updatedAt && dateConvert(p.updatedAt)}
+          </div>
+          <div className={'description'}>{ReactHtmlParser(p.description)}</div>
+
+          <Button className={'edit'} onClick={() => history.push(`/${p.id}`)}>
+            &#9998;
+          </Button>
           {/*          <Button
             className={'del'}
             //disabled={p.id === deletedId}
@@ -122,40 +134,50 @@ const MyPersons = styled(_MyPersons)`
   .person-card {
     display: grid;
     grid-gap: 8px;
-    grid-template-columns: 1fr 6fr;
-    /*grid-template-areas:
-      'image name name name'
-      'image description description description';
-    */
+    grid-template-columns: 1fr 5fr 1fr;
+    grid-template-areas:
+      'image name edit'
+      'image created edit'
+      'description description description';
+
     //grid-auto-columns: min-content;
   }
-  .person-text {
-    align-self: center;
+  .created {
+    grid-area: created;
+    color: ${colors.secondaryTextColor};
+    font-size: 15px;
   }
   .name {
-    //grid-area: name;
+    grid-area: name;
+    font-size: 25px;
   }
   .description {
-    //grid-area: description;
+    grid-area: description;
     color: ${colors.secondaryTextColor};
     text-overflow: ellipsis;
     overflow: hidden;
-    max-width: 300px;
-    white-space: nowrap;
+    //max-width: 450px;
+    //white-space: nowrap;
   }
   .image {
-    //grid-area: image;
+    grid-area: image;
+    //display: grid;
     overflow: hidden;
-    border-radius: 50%;
-    width: 55px;
-    height: 55px;
-    img {
-      width: 55px;
-      height: 55px;
-    }
-    /*.del {
-      grid-area: del;
+    //border-radius: 50%;
+    min-width: 75px;
+    min-height: 110px;
+    max-width: 140px;
+    //align-items: center;
+    background-size: cover;
+    background-position: center;
+    //height: 55px;
+    /*img {
+      width: 250px;
+      align-self: center;
     }*/
+  }
+  .edit {
+    grid-area: edit;
   }
 `
 
