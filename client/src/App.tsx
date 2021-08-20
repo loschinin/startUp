@@ -15,8 +15,8 @@ export type PersonType = {
   name: string
   description: string
   image: string
-  momId: number | null
-  dadId: number | null
+  momId: number
+  dadId: number
   createdAt?: string
   updatedAt?: string
   userId: number

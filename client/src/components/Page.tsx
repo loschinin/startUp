@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { StyledFC } from '../types'
 import { colors } from '../design'
 
-const _Page: StyledFC = ({ className, children }) => {
+const _Page: StyledFC<{ gap?: number }> = ({ className, children }) => {
   return <div className={className}>{children}</div>
 }
 const Page = styled(_Page)`
@@ -11,7 +11,7 @@ const Page = styled(_Page)`
   position: relative;
   display: grid;
   grid-auto-rows: min-content;
-  gap: 8px;
+  gap: ${(props) => props.gap || 8}px;
   min-height: 70vh;
   background-color: ${colors.paperColor};
   color: ${colors.primaryTextColor};

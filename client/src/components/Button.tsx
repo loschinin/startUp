@@ -38,6 +38,10 @@ const Button = styled(_Button)`
   padding: 8px;
   cursor: pointer;
   font-size: 25px;
+  :hover {
+    color: ${colors.hoverButtonTextColor};
+    border-color: ${colors.hoverButtonTextColor};
+  }
   :disabled {
     //background-color: transparent;
     color: ${colors.disabledButtonTextColor};

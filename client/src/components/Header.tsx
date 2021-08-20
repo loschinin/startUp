@@ -4,7 +4,7 @@ import { StyledFC } from '../types'
 import { login, registration } from '../http/userAPI'
 import { fetchPersons } from '../http/personAPI'
 import { PersonType } from '../App'
-import { FIRST_PAGE, LIMIT } from '../constants'
+import { FIRST_PAGE, PAGES_LIMIT } from '../constants'
 import Button from './Button'
 import Input from './Input'
 import { colors } from '../design'
@@ -60,7 +60,9 @@ const _Header: StyledFC<{
 
   useMemo(() => {
     if (isAuth && userId) {
-      fetchPersons(userId, LIMIT, FIRST_PAGE).then((res) => setPersons(res))
+      fetchPersons(userId, PAGES_LIMIT, FIRST_PAGE).then((res) =>
+        setPersons(res)
+      )
     }
   }, [isAuth, userId, setPersons])
   const signIn = async () => {

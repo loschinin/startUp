@@ -6,9 +6,10 @@ import { StyledFC } from '../types'
 import styled from 'styled-components'
 import Page from '../components/Page'
 import { createPerson, fetchPerson } from '../http/personAPI'
-import { BASE_URL, LIMIT } from '../constants'
+import { BASE_URL, DESCRIPTION_LIMIT, PAGES_LIMIT } from '../constants'
 import { PersonType } from '../App'
 import TextArea from '../components/TextArea'
+import { colors } from '../design'
 
 const _NewPerson: StyledFC<{
   userId: number
@@ -17,7 +18,9 @@ const _NewPerson: StyledFC<{
   setWarnings: Dispatch<SetStateAction<string>>
 }> = ({ className, userId, persons, setPersons, setWarnings }) => {
   const history = useHistory()
-  const [imageBuffer, setImageBuffer] = useState<string | ArrayBuffer>('')
+  const [imageBuffer, setImageBuffer] = useState<string | ArrayBuffer>(
+    `${BASE_URL}defaultUser.svg`
+  )
   const [inputsState, setInputsState] = useState<{
     name: string
     description: string
@@ -26,7 +29,7 @@ const _NewPerson: StyledFC<{
     dadId: number
     userId: number
   }>({
-    name: 'Some name',
+    name: '',
     description: '',
     imageFile: '',
     momId: 0,
@@ -42,19 +45,6 @@ const _NewPerson: StyledFC<{
       onChange: (e: ChangeEvent<HTMLInputElement>) => void
     }
   } = {
-    name: {
-      type: 'text',
-      placeholder: 'name*',
-      value: inputsState.name,
-      onChange: (e) => setInputsState({ ...inputsState, name: e.target.value }),
-    },
-    description: {
-      type: 'text',
-      placeholder: 'description',
-      value: inputsState.description,
-      onChange: (e) =>
-        setInputsState({ ...inputsState, description: e.target.value }),
-    },
     imageFile: {
       type: 'file',
       placeholder: 'image',
@@ -78,11 +68,20 @@ const _NewPerson: StyledFC<{
           })
           setImageBuffer('')
         }
-        /*setInputsState({
-          ...inputsState,
-          imageFile: e.target.files ? e.target.files[0] : '',
-        })*/
       },
+    },
+    name: {
+      type: 'text',
+      placeholder: 'name*',
+      value: inputsState.name,
+      onChange: (e) => setInputsState({ ...inputsState, name: e.target.value }),
+    },
+    description: {
+      type: 'text',
+      placeholder: `Please write description about the person shortly. Limit: ${DESCRIPTION_LIMIT}`,
+      value: inputsState.description,
+      onChange: (e) =>
+        setInputsState({ ...inputsState, description: e.target.value }),
     },
     momId: {
       type: 'number',
@@ -116,7 +115,7 @@ const _NewPerson: StyledFC<{
       const newPerson = await fetchPerson(id)
       setPersons({
         count: persons.count + 1,
-        rows: [newPerson, ...persons.rows.slice(0, LIMIT - 1)],
+        rows: [newPerson, ...persons.rows.slice(0, PAGES_LIMIT - 1)],
       })
       history.goBack()
       setWarnings('')
@@ -146,7 +145,7 @@ const _NewPerson: StyledFC<{
         </div>
       )}
       {Object.keys(inputs).map((i, index) =>
-        index !== 1 ? (
+        index !== 2 ? (
           <Input
             key={i}
             type={inputs[i].type}
@@ -155,21 +154,42 @@ const _NewPerson: StyledFC<{
             onChange={inputs[i].onChange}
           />
         ) : (
-          <TextArea
-            rows={7}
-            key={i}
-            placeholder={inputs[i].placeholder}
-            value={inputs[i].value}
-            onChange={
-              inputs[i].onChange as unknown as (
-                e: ChangeEvent<HTMLTextAreaElement>
-              ) => void
-            }
-          />
+          <div key={i}>
+            <div>
+              Description:{' '}
+              <span
+                style={{
+                  color: `${
+                    inputsState.description.length > DESCRIPTION_LIMIT
+                      ? colors.warningTextColor
+                      : colors.primaryTextColor
+                  }`,
+                }}
+              >
+                {inputsState.description.length}
+              </span>
+            </div>
+            <TextArea
+              rows={7}
+              placeholder={inputs[i].placeholder}
+              value={inputs[i].value}
+              onChange={
+                inputs[i].onChange as unknown as (
+                  e: ChangeEvent<HTMLTextAreaElement>
+                ) => void
+              }
+            />
+          </div>
         )
       )}
       <Button
-        disabled={!(inputsState.name && inputsState.imageFile)}
+        disabled={
+          !(
+            inputsState.name &&
+            inputsState.imageFile &&
+            inputsState.description.length < DESCRIPTION_LIMIT
+          )
+        }
         primary
         onClick={() => saveNewPerson()}
       >
@@ -185,9 +205,10 @@ const NewPerson = styled(_NewPerson)`
     overflow: hidden;
     border-radius: 0;
     width: 100%;
+    max-width: 400px;
     height: 300px;
     background-size: cover;
-    background-position: center;
+    background-position: 50% 30%;
 
     img {
       width: 100%;
