@@ -5,6 +5,7 @@ import MyPersons from '../pages/MyPersons'
 import { PersonType } from '../App'
 import EditPerson from '../pages/EditPerson'
 import NewPerson from '../pages/NewPerson'
+import { RecoilRoot } from 'recoil'
 
 const AppRouter: FC<{
   isAuth: boolean
@@ -23,11 +24,13 @@ const AppRouter: FC<{
             key={'/'}
             path={'/'}
             render={() => (
-              <MyPersons
-                userId={userId}
-                persons={persons}
-                setPersons={setPersons}
-              />
+              <RecoilRoot>
+                <MyPersons
+                  userId={userId}
+                  persons={persons}
+                  setPersons={setPersons}
+                />
+              </RecoilRoot>
             )}
             exact
           />

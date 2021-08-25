@@ -27,15 +27,25 @@ import {
 import Input from '../components/Input'
 import TextArea from '../components/TextArea'
 import { colors } from '../design'
+import { readFileAndSetBase64 } from '../utils'
 
-type InputsStateType = {
+export type InputsStateType = {
   name: string
   description: string
-  image: string
+  image?: string
   imageFile: string | Blob
   momId: number
   dadId: number
   userId: number
+}
+
+export type InputsObj = {
+  [k: string]: {
+    type: string
+    placeholder: string
+    value?: string | number
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void
+  }
 }
 
 const _EditPerson: StyledFC<{
@@ -45,20 +55,6 @@ const _EditPerson: StyledFC<{
   setWarnings: Dispatch<SetStateAction<string>>
 }> = ({ className, userId, persons, setPersons, setWarnings }) => {
   const { id } = useParams<{ id: string }>()
-  //console.log(id)
-
-  /*const [person, setPerson] = useState<PersonType>({
-    id: 0,
-    name: '',
-    description: '',
-    image: '',
-    momId: 0,
-    dadId: 0,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    userId,
-  })*/
-  //console.log(person)
   const [initialInputsState, setInitialInputsState] = useState<InputsStateType>(
     {
       name: '',
@@ -72,8 +68,8 @@ const _EditPerson: StyledFC<{
   )
   const [inputsState, setInputsState] =
     useState<InputsStateType>(initialInputsState)
-  console.log('initialInputState', initialInputsState)
-  console.log('inputsState', inputsState)
+  //console.log('initialInputState', initialInputsState)
+  //console.log('inputsState', inputsState)
   useMemo(() => {
     setInputsState(initialInputsState)
   }, [initialInputsState])
@@ -91,33 +87,20 @@ const _EditPerson: StyledFC<{
         userId: +id,
       })
       //if (name !== inputsState.name) setIsAnyInputChanged(true)
-      console.log(name)
+      //console.log(name)
     })
   }, [id])
   const history = useHistory()
   const [imageBuffer, setImageBuffer] = useState<string | ArrayBuffer>('')
 
-  const inputs: {
-    [k: string]: {
-      type: string
-      placeholder: string
-      value?: string | number
-      onChange: (e: ChangeEvent<HTMLInputElement>) => void
-    }
-  } = {
+  const inputs: InputsObj = {
     imageFile: {
       type: 'file',
       placeholder: 'image',
       onChange: (e) => {
-        console.log('FILE!', e.target.files ? e.target.files[0] : '')
         /** IF IMG SELECTED */
-        if (e.target.files && e.target.files[0]) {
-          const reader = new FileReader()
-          reader.onloadend = function () {
-            const result = reader.result
-            if (result) setImageBuffer(result)
-          }
-          reader.readAsDataURL(e.target.files[0])
+        readFileAndSetBase64(e.target.files, setImageBuffer)
+        if (e.target.files) {
           setInputsState({
             ...inputsState,
             imageFile: e.target.files[0],
@@ -129,8 +112,6 @@ const _EditPerson: StyledFC<{
           })
           setImageBuffer('')
         }
-
-        //console.log('inputsState:', inputsState)
       },
     },
     name: {
@@ -138,14 +119,12 @@ const _EditPerson: StyledFC<{
       placeholder: 'name*',
       value: inputsState.name,
       onChange: (e) => {
-        //console.log('nameValue:', e.target.value)
-        //console.log('state:', inputsState.name)
         setInputsState({ ...inputsState, name: e.target.value })
       },
     },
     description: {
       type: 'text',
-      placeholder: 'description',
+      placeholder: `Please write description about the person shortly. Limit: ${DESCRIPTION_LIMIT}`,
       value: inputsState.description,
       onChange: (e) =>
         setInputsState({ ...inputsState, description: e.target.value }),
@@ -187,12 +166,13 @@ const _EditPerson: StyledFC<{
         name,
         description,
         image,
-        momId,
-        dadId,
+        momId: +momId,
+        dadId: +dadId,
         userId,
         createdAt,
         updatedAt: new Date().toISOString(),
       }
+      console.log(+momId)
       setPersons({
         ...persons,
         rows: [
@@ -210,40 +190,14 @@ const _EditPerson: StyledFC<{
       //console.log(e.message)
       setWarnings(e.message)
     }
-    //persons.rows.filter((p) => p.id === +id)
-    /*try {
-            const {id} = await createPerson(formData)
-            const newPerson = await fetchPerson(id)
-            setPersons({
-                count: persons.count + 1,
-                rows: [newPerson, ...persons.rows.slice(0, LIMIT - 1)],
-            })
-            history.goBack()
-            setWarnings('')
-        } catch (e) {
-            //console.log(e.message)
-            setWarnings(e.message)
-        }*/
   }
-  //console.log('IMAGE BUFFER', imageBuffer)
-  //console.log('INPUTSTATEIMAGE', inputsState.image)
-  //console.log('compareObject:', initialInputsState == inputsState)
-  const deletePersonHandler = async (personId: number) => {
-    const { id } = await deletePerson(personId)
-    //const { rows, count } = await fetchPersons(userId, LIMIT, FIRST_PAGE)
-    //setPersons({ count, rows })
-    const minusOnePersons = persons.rows.filter((p) => p.id !== id)
 
-    console.log({ minusOnePersons })
-    console.log({ persons })
+  const deletePersonHandler = async (personId: number) => {
+    await deletePerson(personId)
     await fetchPersons(userId, PAGES_LIMIT, FIRST_PAGE).then((res) =>
       setPersons(res)
     )
     history.goBack()
-    //console.log({ e })
-    //setDeletedId(id)
-    //setPersons({ count: persons.count - 1, rows: minusOnePersons })
-    //setNextPage(FIRST_PAGE)
   }
   return (
     <Page className={className}>
@@ -260,12 +214,7 @@ const _EditPerson: StyledFC<{
               imageBuffer || BASE_URL + inputsState.image
             })`,
           }}
-        >
-          {/*<img
-            src={`${imageBuffer || BASE_URL + inputsState.image}`}
-            alt={''}
-          />*/}
-        </div>
+        />
       )}
 
       {Object.keys(inputs).map((i, index) =>
@@ -331,21 +280,13 @@ const _EditPerson: StyledFC<{
 
 const EditPerson = styled(_EditPerson)`
   .image {
-    //grid-area: image;
     overflow: hidden;
     border-radius: 0;
     width: 100%;
     max-width: 400px;
     height: 300px;
     background-size: cover;
-    background-position: 50% 40%;
-
-    /*img {
-      width: 100%;
-    }*/
-    /*.del {
-      grid-area: del;
-    }*/
+    background-position: 50% 30%;
   }
 `
 

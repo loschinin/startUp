@@ -10,6 +10,8 @@ import { BASE_URL, DESCRIPTION_LIMIT, PAGES_LIMIT } from '../constants'
 import { PersonType } from '../App'
 import TextArea from '../components/TextArea'
 import { colors } from '../design'
+import { readFileAndSetBase64 } from '../utils'
+import { InputsObj, InputsStateType } from './EditPerson'
 
 const _NewPerson: StyledFC<{
   userId: number
@@ -21,14 +23,7 @@ const _NewPerson: StyledFC<{
   const [imageBuffer, setImageBuffer] = useState<string | ArrayBuffer>(
     `${BASE_URL}defaultUser.svg`
   )
-  const [inputsState, setInputsState] = useState<{
-    name: string
-    description: string
-    imageFile: string | Blob
-    momId: number
-    dadId: number
-    userId: number
-  }>({
+  const [inputsState, setInputsState] = useState<InputsStateType>({
     name: '',
     description: '',
     imageFile: '',
@@ -37,26 +32,14 @@ const _NewPerson: StyledFC<{
     userId,
   })
 
-  const inputs: {
-    [k: string]: {
-      type: string
-      placeholder: string
-      value?: string | number
-      onChange: (e: ChangeEvent<HTMLInputElement>) => void
-    }
-  } = {
+  const inputs: InputsObj = {
     imageFile: {
       type: 'file',
       placeholder: 'image',
       onChange: (e) => {
         /** IF IMG SELECTED */
-        if (e.target.files && e.target.files[0]) {
-          const reader = new FileReader()
-          reader.onloadend = function () {
-            const result = reader.result
-            if (result) setImageBuffer(result)
-          }
-          reader.readAsDataURL(e.target.files[0])
+        readFileAndSetBase64(e.target.files, setImageBuffer)
+        if (e.target.files) {
           setInputsState({
             ...inputsState,
             imageFile: e.target.files[0],
@@ -66,7 +49,7 @@ const _NewPerson: StyledFC<{
             ...inputsState,
             imageFile: '',
           })
-          setImageBuffer('')
+          setImageBuffer(`${BASE_URL}defaultUser.svg`)
         }
       },
     },
@@ -123,9 +106,6 @@ const _NewPerson: StyledFC<{
       //console.log(e.message)
       setWarnings(e.message)
     }
-
-    //console.log({ result })
-    //console.log({ persons })
   }
 
   return (
@@ -140,9 +120,7 @@ const _NewPerson: StyledFC<{
           style={{
             backgroundImage: `url(${imageBuffer})`,
           }}
-        >
-          {/*<img src={`${imageBuffer}`} alt={''} />*/}
-        </div>
+        />
       )}
       {Object.keys(inputs).map((i, index) =>
         index !== 2 ? (
@@ -201,7 +179,6 @@ const _NewPerson: StyledFC<{
 
 const NewPerson = styled(_NewPerson)`
   .image {
-    //grid-area: image;
     overflow: hidden;
     border-radius: 0;
     width: 100%;
@@ -209,13 +186,6 @@ const NewPerson = styled(_NewPerson)`
     height: 300px;
     background-size: cover;
     background-position: 50% 30%;
-
-    img {
-      width: 100%;
-    }
-    /*.del {
-      grid-area: del;
-    }*/
   }
 `
 

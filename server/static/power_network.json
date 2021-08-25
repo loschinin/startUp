@@ -1,0 +1,32 @@
+{
+  "results": [
+    {
+      "nodes": [
+        {
+          "name": "JavaScript / TypeScript",
+          "radiusSize": 20,
+          "fillColor": "#fa6502",
+          "group": 3
+        },
+        {
+          "name": "Jane",
+          "radiusSize": 20,
+          "fillColor": "#fa6502",
+          "group": 1
+        }
+      ],
+      "links": [
+        {
+          "source": "Jane",
+          "target": "JavaScript / TypeScript",
+          "value": "How would you erase a character from a string?"
+        },
+        {
+          "source": "Jane",
+          "target": "JavaScript / TypeScript",
+          "value": "whats??? How would you erase a character?"
+        }
+      ]
+    }
+  ]
+}
