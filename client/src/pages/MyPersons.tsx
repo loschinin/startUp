@@ -1,19 +1,15 @@
 import React, { Dispatch, SetStateAction, useState } from 'react'
-import styled from 'styled-components'
-import { StyledFC } from '../types'
-import { PersonType } from '../App'
-import { fetchPersons } from '../http/personAPI'
-import { BASE_URL, NEXT_PAGE, PAGES_LIMIT } from '../constants'
-import Button from '../components/Button'
-import { useHistory } from 'react-router-dom'
-import Page from '../components/Page'
-import { colors } from '../design'
 import ReactHtmlParser from 'react-html-parser'
+import { useHistory } from 'react-router-dom'
+import styled from 'styled-components'
+import { PersonType } from '../App'
+import Button from '../components/Button'
+import Page from '../components/Page'
+import { BASE_URL, NEXT_PAGE, PAGES_LIMIT } from '../constants'
+import { colors } from '../design'
+import { fetchPersons } from '../http/personAPI'
+import { StyledFC } from '../types'
 import { dateConvert } from '../utils'
-import Graph from '../components/Graph'
-import { Types } from '../components/Graph/types'
-import { useRecoilValue } from 'recoil'
-import { getPowerChartData } from '../components/Graph/powerChartSelectors'
 
 const _MyPersons: StyledFC<{
   userId: number
@@ -37,40 +33,43 @@ const _MyPersons: StyledFC<{
   }
 
   // @ts-ignore
-  /*
-  const nodeHoverTooltip = useCallback<{
+  /*const nodeHoverTooltip = useCallback<{
     (node: { name: string }): string
     (arg0: any): string
   }>((node) => `${node.name}`, [])
-*/
   const forceData: Types.DataObject = useRecoilValue(
     getPowerChartData
-  ) as Types.DataObject
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  ) as Types.DataObject*/
+  //const [selectedIndex, setSelectedIndex] = useState(0)
+  /*const [d, setD] = useState([10, 20, 30, 40, 50, 60, 70, 80])
+  const updateData = useCallback(() => {
+    const count = 5 + Math.round(Math.random() * 15)
+    const values = []
+    for (let i = 0; i < count; i++) {
+      values[i] = 10 + Math.round(Math.random() * 70)
+    }
+    setD(values)
+  }, [])
 
+  const rand = Math.floor(Math.random() * 100)
+  const rand2 = Math.floor(Math.random() * 100 + 10)
+  console.log(rand)*/
   return (
     <Page className={className} gap={24}>
-      {selectedIndex}
-      {forceData ? (
-        <Graph
-          width={450}
-          height={350}
-          data={forceData}
-          onNodeSelected={setSelectedIndex}
-          linkDistance={70}
-          linkStrength={1}
-          chargeStrength={-20}
-          centerWidth={450 / 2}
-          centerHeight={350 / 2}
-        />
-      ) : (
-        'LOADING...'
-      )}
+      {/*<>
+        <button onClick={updateData}>Update Data</button>
+        <Graph data={d} />
+      </>*/}
 
-      {/*<ForceGraph
-        linksData={data.links}
-        nodesData={data.nodes}
-        nodeHoverTooltip={nodeHoverTooltip}
+      {/*<Graph
+        data={forceData}
+        width={300}
+        height={400}
+        linkDistance={30}
+        centerHeight={30}
+        linkStrength={40}
+        centerWidth={30}
+        chargeStrength={7}
       />*/}
       <Button primary onClick={() => history.push('/new')}>
         New Person

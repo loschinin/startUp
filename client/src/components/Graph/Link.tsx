@@ -17,7 +17,7 @@ export default class Link extends React.PureComponent<ILinkProps> {
     d3.select('.linkGroup')
       .append('text')
       .attr('class', 'linkTextValue')
-      .text((link.link.value as string).replace(/(.{50})..+/, '$1…'))
+      .text(link.link.value.replace(/(.{50})..+/, '$1…'))
       .attr('x', event.nativeEvent.offsetX)
       .attr('y', event.nativeEvent.offsetY)
   }

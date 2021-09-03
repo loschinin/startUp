@@ -1,107 +1,75 @@
-import * as React from 'react'
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
 import * as d3 from 'd3'
-import './styles.css'
 import { Simulation, SimulationNodeDatum } from 'd3-force'
-import Links from './Links'
+import * as React from 'react'
 import Circles from './Circles'
-import Labels from './Labels'
+import Links from './Links'
+import './styles.css'
 import { Types } from './types'
 
-const SimpleForceGraph: FC<ITopContentPowerChartProps> = (props) => {
-  //const simulation: Simulation<SimulationNodeDatum, undefined> | undefined
-  const [state, setState] = useState(props.data)
-  useMemo(() => {
-    //simulatePositions()
-    //drawTicks()
-    //addZoomCapabilities()
-    //simulation()
-    const ticked = () => {
-      d3.select('svg')
-        .selectAll('circle')
-        .data(state.nodes)
-        .join('circle')
-        .attr('r', 5)
-        .attr('cx', function (d) {
-          // @ts-ignore
-          return d.x
-        })
-        .attr('cy', function (d) {
-          // @ts-ignore
-          return d.y
-        })
+class Graph extends React.PureComponent<
+  ITopContentPowerChartProps,
+  ITopContentPowerChartState
+> {
+  private simulation: Simulation<SimulationNodeDatum, undefined> | undefined
+
+  constructor(props: ITopContentPowerChartProps) {
+    super(props)
+    this.state = {
+      // EE: the clone data is needed to avoid:
+      // TypeError: Cannot add property index, object is not extensible
+      clonedData: JSON.parse(JSON.stringify(this.props.data)),
     }
+  }
 
-    const simulation = d3
-      .forceSimulation()
-      .nodes([{}, {}, {}, {}, {}])
-      .force('charge', d3.forceManyBody().strength(-20))
-      .force('center', d3.forceCenter(props.width / 2, props.height / 2))
-      .on('tick', ticked)
-  }, [])
-  console.log({ state })
-  console.log('propsData:', props.data)
+  componentDidMount() {
+    this.simulatePositions()
+    this.drawTicks()
+    this.addZoomCapabilities()
+  }
 
-  /*
   componentDidUpdate(
     prevProps: ITopContentPowerChartProps,
     prevState: ITopContentPowerChartState
   ) {
-    simulatePositions()
-    drawTicks()
-  }*/
+    this.simulatePositions()
+    this.drawTicks()
+  }
 
-  /*  const simulation: Simulation<SimulationNodeDatum, undefined> | undefined = d3
-    .forceSimulation()
-    .nodes(state.clonedData?.nodes as SimulationNodeDatum[])
-    .force(
-      'link',
-      d3
-        .forceLink()
-        .id((d) => {
-          return (d as Types.node).name
-        })
-        .distance(props.linkDistance)
-        .strength(props.linkStrength)
-    )
-    .force('charge', d3.forceManyBody().strength(props.chargeStrength))
-    .force('center', d3.forceCenter(props.centerWidth, props.centerHeight))*/
-
-  /*const simulatePositions = () => {
-    const simulationForceLink = d3
+  simulatePositions = () => {
+    this.simulation = d3
       .forceSimulation()
-      .nodes(state.clonedData?.nodes)
+      .nodes(this.state.clonedData?.nodes as SimulationNodeDatum[])
       .force(
         'link',
         d3
           .forceLink()
-          .id((d) => (d as Types.node).name)
-          .distance(props.linkDistance)
-          .strength(props.linkStrength)
+          .id((d) => {
+            return (d as Types.node).name
+          })
+          .distance(this.props.linkDistance)
+          .strength(this.props.linkStrength)
       )
-      .force('charge', d3.forceManyBody().strength(props.chargeStrength))
-      .force('center', d3.forceCenter(props.centerWidth, props.centerHeight))
+      .force('charge', d3.forceManyBody().strength(this.props.chargeStrength))
+      .force(
+        'center',
+        d3.forceCenter(this.props.centerWidth, this.props.centerHeight)
+      )
+    const simulationForceLink = this.simulation.force('link')
     console.log(simulationForceLink)
     // @ts-ignore
-    //simulationForceLink.force('link')?.links(state.clonedData?.links)
-    console.log(simulationForceLink)
-  }*/
+    this.simulation.force('link')?.links(this.state.clonedData?.links)
+  }
 
-  /*  const drawTicks = () => {
+  drawTicks = () => {
     const nodes = d3.selectAll('.node')
     const links = d3.selectAll('.link')
     const labels = d3.selectAll('.label')
 
-    d3.forceSimulation()
-      .nodes(state.clonedData?.nodes as SimulationNodeDatum[])
-      .on('tick', onTickHandler)
+    if (this.simulation) {
+      this.simulation
+        .nodes(this.state.clonedData?.nodes as SimulationNodeDatum[])
+        .on('tick', onTickHandler)
+    }
 
     function onTickHandler() {
       links
@@ -132,9 +100,9 @@ const SimpleForceGraph: FC<ITopContentPowerChartProps> = (props) => {
           return (d as Types.point).y + 5
         })
     }
-  }*/
+  }
 
-  /*  const addZoomCapabilities = () => {
+  addZoomCapabilities = () => {
     const container = d3.select('.container')
     const zoom = d3
       .zoom()
@@ -154,57 +122,64 @@ const SimpleForceGraph: FC<ITopContentPowerChartProps> = (props) => {
         k *= 1
         container
           .attr('transform', `translate(${x}, ${y})scale(${k})`)
-          .attr('width', props.width)
-          .attr('height', props.height)
+          .attr('width', this.props.width)
+          .attr('height', this.props.height)
       })
 
     // @ts-ignore
     container.call(zoom)
-  }*/
-
-  const restartDrag = () => {
-    //d3.forceSimulation().alphaTarget(0.2).restart()
   }
 
-  const stopDrag = () => {
-    //d3.forceSimulation().alphaTarget(0)
+  restartDrag = () => {
+    if (this.simulation) this.simulation.alphaTarget(0.2).restart()
   }
 
-  if (JSON.stringify(props.data) !== JSON.stringify(state)) setState(props.data)
+  stopDrag = () => {
+    if (this.simulation) this.simulation.alphaTarget(0)
+  }
 
-  const initialScale = 1
-  const initialTranslate = [0, 0]
-  const { width, height } = props
-  return (
-    <svg
-      className="container"
-      //x={0}
-      //y={0}
-      width={width}
-      height={height}
-      //transform={`translate(${initialTranslate[0]}, ${initialTranslate[1]})scale(${initialScale})`}
-    >
-      <g>
-        <Links links={state.links as Types.link[]} />
-        <Circles
-          nodes={state.nodes as Types.node[]}
-          restartDrag={restartDrag}
-          stopDrag={stopDrag}
-        />
-        <Labels
-          nodes={state.nodes as Types.node[]}
-          onNodeSelected={props.onNodeSelected}
-        />
-      </g>
-    </svg>
-  )
+  render() {
+    if (
+      JSON.stringify(this.props.data) !== JSON.stringify(this.state.clonedData)
+    ) {
+      this.setState({
+        clonedData: JSON.parse(JSON.stringify(this.props.data)),
+      })
+    }
+    const initialScale = 1
+    const initialTranslate = [0, 0]
+    const { width, height } = this.props
+    return (
+      <svg
+        className="container"
+        x={0}
+        y={0}
+        width={width}
+        height={height}
+        transform={`translate(${initialTranslate[0]}, ${initialTranslate[1]})scale(${initialScale})`}
+      >
+        <g>
+          <Links links={this.state.clonedData?.links as Types.link[]} />
+          <Circles
+            nodes={this.state.clonedData?.nodes as Types.node[]}
+            restartDrag={this.restartDrag}
+            stopDrag={this.stopDrag}
+          />
+          {/*<Labels
+            nodes={this.state.clonedData?.nodes as Types.node[]}
+            onNodeSelected={this.props.onNodeSelected}
+          />*/}
+        </g>
+      </svg>
+    )
+  }
 }
 
 interface ITopContentPowerChartProps {
   width: number
   height: number
   data: Types.DataObject
-  onNodeSelected: Dispatch<SetStateAction<number>>
+  //onNodeSelected: Dispatch<SetStateAction<number>>
   linkDistance: number
   linkStrength: number
   chargeStrength: number
@@ -216,4 +191,4 @@ interface ITopContentPowerChartState {
   clonedData: Types.DataObject
 }
 
-export default SimpleForceGraph
+export default Graph

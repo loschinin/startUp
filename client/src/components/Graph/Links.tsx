@@ -1,11 +1,11 @@
 import * as React from 'react'
+
+import * as uuid from 'uuid'
 import Link from './Link'
 import { Types } from './types'
 
-import * as uuid from 'uuid'
-
 export default class Links extends React.PureComponent<{
-  links: Types.link[]
+  links: Types.link[] | any
 }> {
   render() {
     const links = this.props.links.map((link: Types.link) => {

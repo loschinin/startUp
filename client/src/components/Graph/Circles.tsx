@@ -1,6 +1,6 @@
-import * as React from 'react'
 import * as d3 from 'd3'
 import { D3DragEvent } from 'd3'
+import * as React from 'react'
 import Circle from './Circle'
 import { Types } from './types'
 
@@ -31,6 +31,7 @@ export default class Circles extends React.PureComponent<ICirclesProps, {}> {
     // @ts-ignore
     function onDragStart(event: D3DragEvent<SVGCircleElement>, d: Types.datum) {
       if (!event.active) {
+        // @ts-ignore
         props.restartDrag()
       }
       // eslint-disable-next-line no-param-reassign
@@ -54,6 +55,7 @@ export default class Circles extends React.PureComponent<ICirclesProps, {}> {
       d: Types.datum
     ) {
       if (!event.active) {
+        // @ts-ignore
         props.stopDrag()
       }
       // eslint-disable-next-line no-param-reassign
@@ -72,7 +74,7 @@ export default class Circles extends React.PureComponent<ICirclesProps, {}> {
 }
 
 interface ICirclesProps {
-  nodes: Types.node[]
-  restartDrag: () => void
-  stopDrag: () => void
+  nodes: Types.node[] | any
+  restartDrag?: () => void
+  stopDrag?: () => void
 }

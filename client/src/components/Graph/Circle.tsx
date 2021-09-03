@@ -14,8 +14,8 @@ export default class Circle extends React.PureComponent<{ node: Types.node }> {
       // eslint-disable-next-line no-return-assign
       <circle
         className="node"
-        r={this.props.node.radiusSize}
-        fill={this.props.node.fillColor as string}
+        r={20}
+        fill={'#fa5500'}
         ref={(ref: SVGCircleElement) => (this.ref = ref)}
       >
         <title>{this.props.node.name}</title>
