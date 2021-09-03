@@ -6,27 +6,27 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import styled from 'styled-components'
-import { StyledFC } from '../types'
-import Button from '../components/Button'
 import { useHistory, useParams } from 'react-router-dom'
-import Page from '../components/Page'
-import {
-  deletePerson,
-  fetchPerson,
-  fetchPersons,
-  updatePerson,
-} from '../http/personAPI'
+import styled from 'styled-components'
 import { PersonType } from '../App'
+import Button from '../components/Button'
+import Input from '../components/Input'
+import Page from '../components/Page'
+import TextArea from '../components/TextArea'
 import {
   BASE_URL,
   DESCRIPTION_LIMIT,
   FIRST_PAGE,
   PAGES_LIMIT,
 } from '../constants'
-import Input from '../components/Input'
-import TextArea from '../components/TextArea'
 import { colors } from '../design'
+import {
+  deletePerson,
+  fetchAllPersons,
+  fetchPerson,
+  updatePerson,
+} from '../http/personAPI'
+import { StyledFC } from '../types'
 import { readFileAndSetBase64 } from '../utils'
 
 export type InputsStateType = {
@@ -55,6 +55,7 @@ const _EditPerson: StyledFC<{
   setWarnings: Dispatch<SetStateAction<string>>
 }> = ({ className, userId, persons, setPersons, setWarnings }) => {
   const { id } = useParams<{ id: string }>()
+  //console.log({ id })
   const [initialInputsState, setInitialInputsState] = useState<InputsStateType>(
     {
       name: '',
@@ -84,12 +85,12 @@ const _EditPerson: StyledFC<{
         imageFile: '',
         momId,
         dadId,
-        userId: +id,
+        userId,
       })
       //if (name !== inputsState.name) setIsAnyInputChanged(true)
       //console.log(name)
     })
-  }, [id])
+  }, [id, userId])
   const history = useHistory()
   const [imageBuffer, setImageBuffer] = useState<string | ArrayBuffer>('')
 
@@ -193,11 +194,15 @@ const _EditPerson: StyledFC<{
   }
 
   const deletePersonHandler = async (personId: number) => {
-    await deletePerson(personId)
-    await fetchPersons(userId, PAGES_LIMIT, FIRST_PAGE).then((res) =>
-      setPersons(res)
-    )
-    history.goBack()
+    try {
+      await deletePerson(personId, userId)
+      await fetchAllPersons(PAGES_LIMIT, FIRST_PAGE).then((res) =>
+        setPersons(res)
+      )
+      history.goBack()
+    } catch (e) {
+      setWarnings(e.message)
+    }
   }
   return (
     <Page className={className}>

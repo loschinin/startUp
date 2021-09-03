@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { PersonType } from '../App'
 import { FIRST_PAGE, PAGES_LIMIT } from '../constants'
 import { colors } from '../design'
-import { fetchPersons } from '../http/personAPI'
+import { fetchAllPersons } from '../http/personAPI'
 import { login, registration } from '../http/userAPI'
 import { StyledFC } from '../types'
 import Button from './Button'
@@ -56,15 +56,10 @@ const _Header: StyledFC<{
       }
     }
   }
-  const { userId } = startAuthState
 
   useMemo(() => {
-    if (isAuth && userId) {
-      fetchPersons(userId, PAGES_LIMIT, FIRST_PAGE).then((res) =>
-        setPersons(res)
-      )
-    }
-  }, [isAuth, userId, setPersons])
+    fetchAllPersons(PAGES_LIMIT, FIRST_PAGE).then((res) => setPersons(res))
+  }, [setPersons])
   const signIn = async () => {
     try {
       const { id, email } = await login(credentials.email, credentials.password)
@@ -84,18 +79,15 @@ const _Header: StyledFC<{
     setIsAuth(false)
     setStartAuthState({ userId: null, email: null })
     //setCredentials({ email: '', password: '' })
-    setWarnings('')
-    setPersons({ count: 0, rows: [] })
+    //setWarnings('')
+    //setPersons({ count: 0, rows: [] })
   }
   const signBtns: { [k: string]: () => Promise<void> } = {
     'sign in': () => signIn(),
     'reg me': () => regMe(),
   }
   return isAuth ? (
-    <div
-      className={className}
-      style={{ fontSize: '25px', textAlign: 'center' }}
-    >
+    <div className={className}>
       <div>PERSONS</div>
       <div>{credentials.email}</div>
       <div style={{ textAlign: 'right' }}>
@@ -104,23 +96,26 @@ const _Header: StyledFC<{
     </div>
   ) : (
     <div className={className}>
-      <Input
-        type={'text'}
-        placeholder={'email'}
-        value={credentials.email}
-        onChange={(e) =>
-          setCredentials({ ...credentials, email: e.target.value })
-        }
-      />
+      <div>PERSONS</div>
+      <div>
+        <Input
+          type={'text'}
+          placeholder={'email'}
+          value={credentials.email}
+          onChange={(e) =>
+            setCredentials({ ...credentials, email: e.target.value })
+          }
+        />
 
-      <Input
-        type={'password'}
-        placeholder={'password'}
-        value={credentials.password}
-        onChange={(e) =>
-          setCredentials({ ...credentials, password: e.target.value })
-        }
-      />
+        <Input
+          type={'password'}
+          placeholder={'password'}
+          value={credentials.password}
+          onChange={(e) =>
+            setCredentials({ ...credentials, password: e.target.value })
+          }
+        />
+      </div>
 
       <div>
         {Object.keys(signBtns).map((s) => (
@@ -143,6 +138,8 @@ const Header = styled(_Header)`
   gap: 8px;
   grid-template-columns: 1fr;
   align-items: center;
+  font-size: 25px;
+  text-align: center;
   //grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   background-color: ${colors.paperColor};
   //height: 10%;

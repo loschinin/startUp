@@ -1,11 +1,10 @@
 import React, { Dispatch, FC, SetStateAction } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
-import { publicRoutes } from '../routes'
-import MyPersons from '../pages/MyPersons'
+
 import { PersonType } from '../App'
 import EditPerson from '../pages/EditPerson'
 import NewPerson from '../pages/NewPerson'
-import { RecoilRoot } from 'recoil'
+import Persons from '../pages/Persons'
 
 const AppRouter: FC<{
   isAuth: boolean
@@ -24,13 +23,11 @@ const AppRouter: FC<{
             key={'/'}
             path={'/'}
             render={() => (
-              <RecoilRoot>
-                <MyPersons
-                  userId={userId}
-                  persons={persons}
-                  setPersons={setPersons}
-                />
-              </RecoilRoot>
+              <Persons
+                userId={userId}
+                persons={persons}
+                setPersons={setPersons}
+              />
             )}
             exact
           />
@@ -62,9 +59,12 @@ const AppRouter: FC<{
           />
         </Switch>
       )}
-      {publicRoutes.map(({ path, Component }) => (
-        <Route key={path} path={path} component={Component} exact />
-      ))}
+      <Route
+        key={'/'}
+        path={'/'}
+        render={() => <Persons persons={persons} setPersons={setPersons} />}
+        exact
+      />
       <Redirect to={'/'} />
     </Switch>
   )
