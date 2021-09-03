@@ -1,13 +1,13 @@
 import React, { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { StyledFC } from '../types'
-import { login, registration } from '../http/userAPI'
-import { fetchPersons } from '../http/personAPI'
 import { PersonType } from '../App'
 import { FIRST_PAGE, PAGES_LIMIT } from '../constants'
+import { colors } from '../design'
+import { fetchPersons } from '../http/personAPI'
+import { login, registration } from '../http/userAPI'
+import { StyledFC } from '../types'
 import Button from './Button'
 import Input from './Input'
-import { colors } from '../design'
 
 const _Header: StyledFC<{
   isAuth: boolean
@@ -92,11 +92,13 @@ const _Header: StyledFC<{
     'reg me': () => regMe(),
   }
   return isAuth ? (
-    <div className={className}>
-      <div />
-      <div />
+    <div
+      className={className}
+      style={{ fontSize: '25px', textAlign: 'center' }}
+    >
+      <div>PERSONS</div>
+      <div>{credentials.email}</div>
       <div style={{ textAlign: 'right' }}>
-        <div style={{ fontSize: '25px' }}>{credentials.email}</div>
         <Button onClick={() => signOut()}>{'sign out'}</Button>
       </div>
     </div>

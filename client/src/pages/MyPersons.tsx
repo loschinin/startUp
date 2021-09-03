@@ -32,50 +32,13 @@ const _MyPersons: StyledFC<{
     }
   }
 
-  // @ts-ignore
-  /*const nodeHoverTooltip = useCallback<{
-    (node: { name: string }): string
-    (arg0: any): string
-  }>((node) => `${node.name}`, [])
-  const forceData: Types.DataObject = useRecoilValue(
-    getPowerChartData
-  ) as Types.DataObject*/
-  //const [selectedIndex, setSelectedIndex] = useState(0)
-  /*const [d, setD] = useState([10, 20, 30, 40, 50, 60, 70, 80])
-  const updateData = useCallback(() => {
-    const count = 5 + Math.round(Math.random() * 15)
-    const values = []
-    for (let i = 0; i < count; i++) {
-      values[i] = 10 + Math.round(Math.random() * 70)
-    }
-    setD(values)
-  }, [])
-
-  const rand = Math.floor(Math.random() * 100)
-  const rand2 = Math.floor(Math.random() * 100 + 10)
-  console.log(rand)*/
   return (
     <Page className={className} gap={24}>
-      {/*<>
-        <button onClick={updateData}>Update Data</button>
-        <Graph data={d} />
-      </>*/}
-
-      {/*<Graph
-        data={forceData}
-        width={300}
-        height={400}
-        linkDistance={30}
-        centerHeight={30}
-        linkStrength={40}
-        centerWidth={30}
-        chargeStrength={7}
-      />*/}
       <Button primary onClick={() => history.push('/new')}>
         New Person
       </Button>
       <div>
-        All: {persons.count} <hr />
+        My persons: {persons.count} <hr />
       </div>
 
       {persons.rows.map((p) => (
