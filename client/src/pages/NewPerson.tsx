@@ -1,15 +1,15 @@
 import React, { ChangeEvent, Dispatch, SetStateAction, useState } from 'react'
-import Input from '../components/Input'
-import Button from '../components/Button'
 import { useHistory } from 'react-router-dom'
-import { StyledFC } from '../types'
 import styled from 'styled-components'
-import Page from '../components/Page'
-import { createPerson, fetchPerson } from '../http/personAPI'
-import { BASE_URL, DESCRIPTION_LIMIT, PAGES_LIMIT } from '../constants'
 import { PersonType } from '../App'
+import Button from '../components/Button'
+import Input from '../components/Input'
+import Page from '../components/Page'
 import TextArea from '../components/TextArea'
+import { BASE_URL, DESCRIPTION_LIMIT, PAGES_LIMIT } from '../constants'
 import { colors } from '../design'
+import { createPerson, fetchPerson } from '../http/personAPI'
+import { StyledFC } from '../types'
 import { readFileAndSetBase64 } from '../utils'
 import { InputsObj, InputsStateType } from './EditPerson'
 
@@ -27,8 +27,6 @@ const _NewPerson: StyledFC<{
     name: '',
     description: '',
     imageFile: '',
-    momId: 0,
-    dadId: 0,
     userId,
   })
 
@@ -66,20 +64,6 @@ const _NewPerson: StyledFC<{
       onChange: (e) =>
         setInputsState({ ...inputsState, description: e.target.value }),
     },
-    momId: {
-      type: 'number',
-      placeholder: 'momId',
-      value: inputsState.momId,
-      onChange: (e) =>
-        setInputsState({ ...inputsState, momId: +e.target.value }),
-    },
-    dadId: {
-      type: 'number',
-      placeholder: 'dadId',
-      value: inputsState.dadId,
-      onChange: (e) =>
-        setInputsState({ ...inputsState, dadId: +e.target.value }),
-    },
   }
   //console.log(inputsState)
 
@@ -88,8 +72,6 @@ const _NewPerson: StyledFC<{
     formData.append('name', inputsState.name)
     formData.append('description', inputsState.description)
     formData.append('image', inputsState.imageFile)
-    formData.append('momId', inputsState.momId.toString())
-    formData.append('dadId', inputsState.dadId.toString())
     formData.append('userId', userId.toString())
     //console.log({ formData })
     //createDevice(formData).then((data) => onHide())

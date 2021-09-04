@@ -44,19 +44,15 @@ const AppRouter: FC<{
             )}
             exact
           />
-          <Route
-            key={'/:id'}
-            path={'/:id'}
-            render={() => (
-              <EditPerson
-                userId={userId}
-                persons={persons}
-                setPersons={setPersons}
-                setWarnings={setWarnings}
-              />
-            )}
-            exact
-          />
+          <Route exact key={'/:id'} path={'/:id'}>
+            <EditPerson
+              userId={userId}
+              persons={persons}
+              setPersons={setPersons}
+              setWarnings={setWarnings}
+            />
+          </Route>
+          <Redirect to={'/'} />
         </Switch>
       )}
       <Route

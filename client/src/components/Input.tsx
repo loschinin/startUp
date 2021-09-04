@@ -1,17 +1,21 @@
 import React, { ChangeEvent } from 'react'
 import styled from 'styled-components'
-import { StyledFC } from '../types'
 import { colors } from '../design'
+import { StyledFC } from '../types'
 
 const _Input: StyledFC<{
   type: string
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void
+  id?: string
+  none?: boolean
   placeholder?: string
   value?: string | number
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void
-}> = ({ className, children, type, placeholder, value, onChange }) => {
+  fz?: number
+}> = ({ className, children, type, id, placeholder, value, onChange }) => {
   return (
     <input
       type={type}
+      id={id}
       placeholder={placeholder}
       value={value}
       onChange={onChange}
@@ -27,11 +31,12 @@ const Input = styled(_Input)`
   background: ${colors.backgroundColor};
   border: 2px solid ${colors.backgroundColor};
   color: ${colors.primaryTextColor};
-  padding: 10px 0;
-  font-size: 20px;
-  @media (min-width: 415px) {
-    font-size: 15px;
-    padding: 4px 0;
+  padding: 4px 0;
+  font-size: ${(props) => props.fz || 20}px;
+  display: ${(props) => (props.none ? 'none' : 'grid')};
+  @media (max-width: 415px) {
+    font-size: ${(props) => props.fz || 25}px;
+    padding: 8px 0;
   }
 `
 export default Input

@@ -1,22 +1,20 @@
+import jwtDecode from 'jwt-decode'
 import React, { useEffect, useMemo, useState } from 'react'
 import { BrowserRouter } from 'react-router-dom'
+import styled from 'styled-components'
 import AppRouter from './components/AppRouter'
+import Footer from './components/Footer'
 import Header from './components/Header'
+import Warnings from './components/Warnings'
+import { colors } from './design'
 import { check } from './http/userAPI'
 import { StyledFC } from './types'
-import styled from 'styled-components'
-import Footer from './components/Footer'
-import jwtDecode from 'jwt-decode'
-import { colors } from './design'
-import Warnings from './components/Warnings'
 
 export type PersonType = {
   id: number
   name: string
   description: string
   image: string
-  momId: number
-  dadId: number
   createdAt?: string
   updatedAt?: string
   userId: number

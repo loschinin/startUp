@@ -8,7 +8,7 @@ const uuid = require("uuid");
 class PersonController {
   async create(req, res, next) {
     try {
-      let { name, description, momId, dadId, userId } = req.body;
+      let { name, description, userId } = req.body;
       const { image } = req.files;
       // todo: transliterate file name
       let fileName = uuid.v4() + "-" + image.name.replace(" ", "_");
@@ -18,8 +18,6 @@ class PersonController {
         description,
         image: fileName,
         userId,
-        momId,
-        dadId,
       });
       return res.json(person);
     } catch (e) {
@@ -28,55 +26,50 @@ class PersonController {
   }
   async editOne(req, res, next) {
     try {
-      const { name, description, momId, dadId, userId } = req.body;
+      const { name, description, userId } = req.body;
       const { id } = req.params;
       // todo: transliterate file name, check ' '
       const person = await Person.findOne({
         where: { id },
       });
-      if (+userId !== person.userId) {
+      if (+userId === person.userId) {
+        const newFileName =
+          req && req.files
+            ? uuid.v4() + "-" + req.files.image.name.replace(" ", "_")
+            : person.image;
+
+        if (req && req.files) {
+          await req.files.image.mv(
+            path.resolve(__dirname, "..", "static", newFileName)
+          );
+          await fs.unlink(
+            path.resolve(__dirname, "..", "static", person.image),
+            () => console.log(`file ${person.image} deleted`)
+          );
+        }
+        await Person.update(
+          {
+            name,
+            description,
+            image: newFileName,
+            userId,
+          },
+          { where: { id, userId } }
+        );
+        //console.log({ updatedPerson });
+        return res.json({
+          name,
+          description,
+          image: newFileName,
+          createdAt: person.createdAt,
+        });
+      } else {
         next(
           ApiError.forbidden(
             "UserIds are not equal, you cannot edit this person"
           )
         );
       }
-
-      const newFileName =
-        req && req.files
-          ? uuid.v4() + "-" + req.files.image.name.replace(" ", "_")
-          : person.image;
-
-      if (req && req.files) {
-        await req.files.image.mv(
-          path.resolve(__dirname, "..", "static", newFileName)
-        );
-        await fs.unlink(
-          path.resolve(__dirname, "..", "static", person.image),
-          () => console.log(`file ${person.image} deleted`)
-        );
-      }
-
-      await Person.update(
-        {
-          name,
-          description,
-          image: newFileName,
-          userId,
-          momId,
-          dadId,
-        },
-        { where: { id, userId } }
-      );
-      //console.log({ updatedPerson });
-      return res.json({
-        name,
-        description,
-        image: newFileName,
-        momId,
-        dadId,
-        createdAt: person.createdAt,
-      });
     } catch (e) {
       next(ApiError.badRequest(e.message));
     }

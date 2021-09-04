@@ -59,18 +59,12 @@ const _Persons: StyledFC<{
             Created: {p.createdAt && dateConvert(p.createdAt)}
             <br />
             Updated: {p.updatedAt && dateConvert(p.updatedAt)}
-            <br />
-            {p.momId !== 0 && `MomId: ${p.momId}`}
-            <br />
-            {p.dadId !== 0 && `DadId: ${p.dadId}`}
           </div>
           <div className={'description'}>{ReactHtmlParser(p.description)}</div>
 
-          {userId === p.userId && (
-            <Button className={'edit'} onClick={() => history.push(`/${p.id}`)}>
-              &#9998;
-            </Button>
-          )}
+          <Button className={'edit'} onClick={() => history.push(`/${p.id}`)}>
+            {userId === p.userId ? 'edit' : 'show'}
+          </Button>
         </div>
       ))}
       {isMorePages && <Button onClick={() => loadMore()}>show more</Button>}

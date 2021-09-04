@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { StyledFC } from '../types'
 import { colors } from '../design'
+import { StyledFC } from '../types'
 
 const _Button: StyledFC<{
   onClick: (e: React.MouseEvent<HTMLElement>) => Promise<void> | void
@@ -9,6 +9,7 @@ const _Button: StyledFC<{
   primary?: boolean
   secondary?: boolean
   danger?: boolean
+  w?: number
 }> = ({ className, onClick, disabled, children }) => {
   return (
     <button className={className} onClick={onClick} disabled={disabled}>
@@ -18,7 +19,7 @@ const _Button: StyledFC<{
 }
 
 const Button = styled(_Button)`
-  width: 100%;
+  width: ${(props) => (props.w ? `${props.w}px` : `100%`)};
   min-width: 70px;
   background: ${(props) =>
     props.primary ? colors.primaryButtonColor : colors.secondaryButtonColor};
@@ -35,9 +36,9 @@ const Button = styled(_Button)`
       : props.danger
       ? colors.dangerButtonTextColor
       : colors.secondaryButtonTextColor};
-  padding: 8px;
+  padding: 4px;
   cursor: pointer;
-  font-size: 25px;
+
   :hover {
     color: ${colors.hoverButtonTextColor};
     border-color: ${colors.hoverButtonTextColor};
@@ -48,9 +49,10 @@ const Button = styled(_Button)`
     border-color: ${colors.disabledButtonTextColor};
     cursor: default;
   }
-  @media (min-width: 415px) {
-    font-size: 17px;
-    padding: 4px;
+  font-size: 17px;
+  @media (max-width: 415px) {
+    font-size: 25px;
+    padding: 8px 0;
   }
 `
 export default Button
